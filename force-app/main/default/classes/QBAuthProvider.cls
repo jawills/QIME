@@ -1,0 +1,110 @@
+global class QBAuthProvider extends Auth.AuthProviderPluginClass {
+               
+    public String redirectUrl; // use this URL for the endpoint that the authentication provider calls back to for configuration
+    private String key;
+    private String secret;
+    private String scope;
+    private String authUrl;    // application redirection to the Concur website for authentication and authorization
+    private String accessTokenUrl; // uri to get the new access token from concur  using the GET verb
+    private String customMetadataTypeApiName = 'QB_Credential__mdt';
+    private String userAPIUrl; // api url to access the user in concur
+    private String userAPIVersionUrl; // version of the user api url to access data from concur
+
+
+    global String getCustomMetadataType() {
+        return customMetadataTypeApiName;
+    }
+
+    global PageReference initiate(Map<string,string> authProviderConfiguration, String stateToPropagate) {
+        key = authProviderConfiguration.get('Client_Id__c');
+        authUrl = authProviderConfiguration.get('Auth_URL__c');
+        scope = authProviderConfiguration.get('Scope__c');
+        redirectUrl = authProviderConfiguration.get('Callback_URL__c');
+        String urlToRedirect = authUrl+'?response_type=code&client_id='+key+'&redirect_uri='+redirectUrl+'&scope='+scope+
+                        '&state='+stateToPropagate;      
+        PageReference pageRef = new PageReference(urlToRedirect);                    
+        return pageRef; 
+    }
+
+    global Auth.AuthProviderTokenResponse handleCallback(Map<string,string> authProviderConfiguration, Auth.AuthProviderCallbackState state ) {
+        //Here, the developer will get the callback with actual protocol.  
+        //Their responsibility is to return a new object called AuthProviderToken
+        //This will contain an optional accessToken and refreshToken
+        System.debug(state.headers);
+        key = authProviderConfiguration.get('Client_Id__c'); 
+        secret = authProviderConfiguration.get('Client_Secret__c'); 
+        accessTokenUrl = authProviderConfiguration.get('Token_URL__c'); 
+        authUrl = authProviderConfiguration.get('Auth_URL__c');
+        scope = authProviderConfiguration.get('Scope__c');
+        redirectUrl = authProviderConfiguration.get('Callback_URL__c');
+        Map<String,String> queryParams = state.queryParameters;
+        String code = queryParams.get('code');
+        String sfdcState = queryParams.get('state');
+        HttpRequest req = new HttpRequest();
+        String url = accessTokenUrl;
+        String header = 'Basic ' + EncodingUtil.base64Encode(Blob.valueOf(key + ':' + secret));
+        
+        String body = 'code=' + code + '&grant_type=authorization_code&redirect_uri=' + redirectUrl ;
+        System.debug(body);
+        req.setEndpoint(url);
+        req.setHeader('Authorization', header);
+        req.setHeader('Accept','application/json');
+        req.setHeader('Content-Type','application/x-www-form-urlencoded');
+
+        req.setBody(body);
+        req.setMethod('POST');
+
+        Http http = new Http();
+        HTTPResponse res = http.send(req);
+        String responseBody = res.getBody();
+        System.debug(res.getBody());
+        BearerTokenWrapper wrapper = (BearerTokenWrapper)System.JSON.deserialize(responseBody, BearerTokenWrapper.class);
+
+        return new Auth.AuthProviderTokenResponse('QBO', wrapper.access_token, wrapper.refresh_token, sfdcState);
+    }
+
+
+    global override Auth.OAuthRefreshResult refresh(Map<String,String> authProviderConfiguration, String refreshToken) {
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint(authProviderConfiguration.get('Token_URL__c'));
+
+        String clientId = authProviderConfiguration.get('Client_Id__c');
+        String clientSecret = authProviderConfiguration.get('Client_Secret__c');
+
+        req.setMethod('POST');
+        req.setHeader('Content-Type','application/x-www-form-urlencoded');
+        req.setHeader('Accept','application/json');
+
+        String header = 'Basic ' + EncodingUtil.base64Encode(Blob.valueOf(clientId + ':' + clientSecret));
+
+        String body = 'grant_type=refresh_token&refresh_token=' + refreshToken;
+        req.setBody(body);
+
+        Http http = new Http();
+        HTTPResponse res = http.send(req);
+
+        BearerTokenWrapper response = (BearerTokenWrapper) JSON.deserialize(res.getBody(), BearerTokenWrapper.class);
+
+        return new Auth.OAuthRefreshResult(response.access_token, response.refresh_token);
+    }
+
+    global Auth.UserData  getUserInfo(Map<string,string> authProviderConfiguration, Auth.AuthProviderTokenResponse response) { 
+        System.debug(LoggingLevel.WARN, 'getUserInfo-config: ' + authProviderConfiguration);
+        System.debug(LoggingLevel.WARN, 'getUserInfo-response: ' + response);
+        System.debug('provider: ' + response.provider);
+        System.debug('state: ' + response.state);
+        return new Auth.UserData('fakeId', 'first', 'last', 'full', 'email', 'link', null, null, null, null, null);
+
+    }
+    
+
+    public class BearerTokenWrapper{
+        public Integer x_refresh_token_expires_in;
+        public String refresh_token {get; set;}
+        public String access_token {get;set;}
+        public Integer expires_in;
+        public String token_type;
+    }
+
+}
+

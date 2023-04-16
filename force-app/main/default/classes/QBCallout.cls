@@ -1,0 +1,66 @@
+public class QBCallout {
+
+    /**
+     * Wrapper for callouts to QBO. Uses
+     * 1. Named credential to handle auth
+     * 2. takes realm / company id for the endpoint url
+     * 3. minor version of qbo api
+     * @param endpoint QBO endpoint to callout to
+     * @param method Http method (needs to be all caps)
+     * @param body http body. Should be null if no body is provided
+     * @return HttpResponse object from the 
+     */
+
+    private static HttpResponse calloutHelper(String endpoint, String method, String body){
+        QIME__QB_Credential__mdt credentials = [SELECT Id, Realm_Id__c, MinorVersion__c FROM QIME__QB_Credential__mdt WHERE DeveloperName = 'QB_Provider'];
+        HttpRequest req = new HttpRequest();
+        String url = 'v3/company/' + credentials.Realm_Id__c + '/' + endpoint;
+        if(!url.contains('?')){
+            url += '?minorversion=' + credentials.MinorVersion__c;
+        }else{
+            url += '&minorversion=' + credentials.MinorVersion__c;
+        }
+        req.setEndpoint('callout:QB_Named_Credential/' + url);
+        req.setMethod(method);
+        if(body != null){
+            req.setBody(body);
+        }
+        req.setheader('Accept', 'application/json');
+        req.setHeader('Content-Type', 'application/json');
+        req.setHeader('Authorization', 'Bearer {!$Credential.OAuthToken}');
+        System.debug(req.getHeader('Authorization'));
+
+        Http http = new Http();
+        HTTPResponse res = http.send(req);
+        System.debug(res.getBody());
+        handleResponseError(res.getBody());
+        return res;
+    }
+
+
+    /**
+     * Throws exception if there is an error in the callout
+     * @param body The json response from the QB callout
+     */
+    private static void handleResponseError(String body){
+        QBOErrorJSON error = QBOErrorJSON.parse(body);
+        if(error != null){
+            if(error.Fault != null && error.Fault.Error != null && error.Fault.Error.size() > 0)
+            Throw new QBException(String.valueOf(error.Fault.Error[0]));
+        }
+    }
+
+    public static QBCustomerJSON getCustomer(Account a){
+        String query = 'select * from customer where id =\'' + a.QIME__QB_Id__c + '\'';
+        HttpResponse res = calloutHelper('query', 'POST', query);
+        return QBCustomerJSON.parse(res.getBody());
+    }
+
+
+    public static QBCustomerResponseJSON createCustomer(String customerJson){
+        HttpResponse res = calloutHelper('customer', 'POST', customerJson);
+        return QBCustomerResponseJSON.parse(res.getBody());
+    }
+
+
+}
