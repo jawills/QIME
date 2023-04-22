@@ -66,8 +66,14 @@ public class QBInvoiceQueryJSON {
 		public String PrintStatus {get;set;} 
 		public String EmailStatus {get;set;} 
 		public Double Balance {get;set;} 
+		public String PrivateNote {get;set;} 
 		public TaxCodeRef CustomerMemo {get;set;} 
-
+		public BillEmail BillEmail {get;set;}
+		public BillEmail BillEmailCc {get;set;} 
+		public BillEmail BillEmailBcc {get;set;} 
+		public TxnTaxDetail TxnTaxDetail {get;set;}
+		public DeliveryInfo DeliveryInfo {get;set;}
+		
 		public Invoice(JSONParser parser) {
 			while (parser.nextToken() != System.JSONToken.END_OBJECT) {
 				if (parser.getCurrentToken() == System.JSONToken.FIELD_NAME) {
@@ -99,8 +105,12 @@ public class QBInvoiceQueryJSON {
 							DocNumber = parser.getText();
 						} else if (text == 'TxnDate') {
 							TxnDate = parser.getText();
+						} else if (text == 'PrivateNote') {
+							PrivateNote = parser.getText();
 						} else if (text == 'CurrencyRef') {
 							CurrencyRef = new CurrencyRef(parser);
+						} else if (text == 'DeliveryInfo') {
+							DeliveryInfo = new DeliveryInfo(parser);
 						} else if (text == 'LinkedTxn') {
 							LinkedTxn = arrayOfLinkedTxn(parser);
 						} else if (text == 'Line') {
@@ -109,6 +119,14 @@ public class QBInvoiceQueryJSON {
 							CustomerRef = new CurrencyRef(parser);
 						} else if (text == 'SalesTermRef') {
 							SalesTermRef = new TaxCodeRef(parser);
+						} else if (text == 'BillEmail') {
+							BillEmail = new BillEmail(parser);
+						} else if (text == 'BillEmailBcc') {
+							BillEmailBcc = new BillEmail(parser);
+						} else if (text == 'BillEmailCc') {
+							BillEmailCc = new BillEmail(parser);
+						} else if (text == 'TxnTaxDetail') {
+							TxnTaxDetail = new TxnTaxDetail(parser);
 						} else if (text == 'DueDate') {
 							DueDate = parser.getText();
 						} else if (text == 'TotalAmt') {
@@ -168,6 +186,30 @@ public class QBInvoiceQueryJSON {
 		}
 	}
 	
+	public class DeliveryInfo {
+		public String DeliveryType {get;set;}
+		public String DeliveryTime {get;set;}
+
+		public DeliveryInfo(JSONParser parser) {
+			while (parser.nextToken() != System.JSONToken.END_OBJECT) {
+				if (parser.getCurrentToken() == System.JSONToken.FIELD_NAME) {
+					String text = parser.getText();
+					if (parser.nextToken() != System.JSONToken.VALUE_NULL) {
+						if (text == 'DeliveryType') {
+							DeliveryType = parser.getText();
+						} else if (text == 'DeliveryTime') {
+							DeliveryTime = parser.getText();
+						} else {
+							System.debug(LoggingLevel.WARN, 'QBInvoiceQueryJSON consuming unrecognized property: '+text);
+							consumeObject(parser);
+						}
+					}
+				}
+			}
+		}
+
+	}
+
 	public class Line_Y {
 		public String Id {get;set;} 
 		public Integer LineNum {get;set;} 
@@ -207,7 +249,10 @@ public class QBInvoiceQueryJSON {
 		public CurrencyRef ItemRef {get;set;} 
 		public CurrencyRef ItemAccountRef {get;set;} 
 		public TaxCodeRef TaxCodeRef {get;set;} 
-
+		public Decimal UnitPrice {get;set;}
+		public Decimal Qty {get;set;}
+		public String ServiceDate {get;set;}
+		
 		public SalesItemLineDetail(JSONParser parser) {
 			while (parser.nextToken() != System.JSONToken.END_OBJECT) {
 				if (parser.getCurrentToken() == System.JSONToken.FIELD_NAME) {
@@ -217,6 +262,12 @@ public class QBInvoiceQueryJSON {
 							ItemRef = new CurrencyRef(parser);
 						} else if (text == 'ItemAccountRef') {
 							ItemAccountRef = new CurrencyRef(parser);
+						} else if (text == 'UnitPrice') {
+							UnitPrice = parser.getDecimalValue();
+						} else if (text == 'Qty') {
+							Qty = parser.getDecimalValue();
+						} else if (text == 'ServiceDate') {
+							ServiceDate = parser.getText();
 						} else if (text == 'TaxCodeRef') {
 							TaxCodeRef = new TaxCodeRef(parser);
 						} else {
@@ -228,15 +279,36 @@ public class QBInvoiceQueryJSON {
 			}
 		}
 	}
-	
+	public class TxnTaxDetail {
+		public Double TotalTax {get;set;}
+
+		public TxnTaxDetail(JSONParser parser) {
+			while (parser.nextToken() != System.JSONToken.END_OBJECT) {
+				if (parser.getCurrentToken() == System.JSONToken.FIELD_NAME) {
+					String text = parser.getText();
+					if (parser.nextToken() != System.JSONToken.VALUE_NULL) {
+						if (text == 'TotalTax') {
+							TotalTax = parser.getDoubleValue();
+						} else {
+							System.debug(LoggingLevel.WARN, 'QBInvoiceQueryJSON consuming unrecognized property: '+text);
+							consumeObject(parser);
+						}
+					}
+				}
+			}
+		}
+
+	}
 	public class Line {
 		public String Id {get;set;} 
 		public Integer LineNum {get;set;} 
 		public Double Amount {get;set;} 
 		public String DetailType {get;set;} 
-		public SalesItemLineDetail SalesItemLineDetail {get;set;} 
+		public SalesItemLineDetail SalesItemLineDetail {get;set;}
+		public GroupLineDetail GroupLineDetail {get;set;} 
 		public LinkedTxn SubTotalLineDetail {get;set;} 
-
+		public String Description {get;set;}
+		// 17549
 		public Line(JSONParser parser) {
 			while (parser.nextToken() != System.JSONToken.END_OBJECT) {
 				if (parser.getCurrentToken() == System.JSONToken.FIELD_NAME) {
@@ -250,12 +322,42 @@ public class QBInvoiceQueryJSON {
 							Amount = parser.getDoubleValue();
 						} else if (text == 'DetailType') {
 							DetailType = parser.getText();
+						} else if (text == 'Description') {
+							Description = parser.getText();
 						} else if (text == 'SalesItemLineDetail') {
 							SalesItemLineDetail = new SalesItemLineDetail(parser);
 						} else if (text == 'SubTotalLineDetail') {
 							SubTotalLineDetail = new LinkedTxn(parser);
+						} else if (text == 'GroupLineDetail') {
+							GroupLineDetail = new GroupLineDetail(parser);
 						} else {
 							System.debug(LoggingLevel.WARN, 'Line consuming unrecognized property: '+text);
+							consumeObject(parser);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public class GroupLineDetail {
+		public GroupItemRef GroupItemRef {get;set;}
+		public Decimal Quantity {get;set;}
+		public Decimal Amount {get;set;}
+
+		public GroupLineDetail(JSONParser parser){
+			while (parser.nextToken() != System.JSONToken.END_OBJECT) {
+				if (parser.getCurrentToken() == System.JSONToken.FIELD_NAME) {
+					String text = parser.getText();
+					if (parser.nextToken() != System.JSONToken.VALUE_NULL) {
+						if (text == 'GroupItemRef') {
+							GroupItemRef = new GroupItemRef(parser);
+						} else if(text == 'Quantity'){
+							Quantity = parser.getDecimalValue();
+						} else if(text == 'Amount'){
+							Amount = parser.getDecimalValue();
+						} else {
+							System.debug(LoggingLevel.WARN, 'SalesItemLineDetail_Z consuming unrecognized property: '+text);
 							consumeObject(parser);
 						}
 					}
@@ -296,8 +398,32 @@ public class QBInvoiceQueryJSON {
 		}
 	}
 	
+	public class GroupItemRef {
+		public String name {get;set;}
+		public String value {get;set;}
+
+		public GroupItemRef(JSONParser parser){
+			while (parser.nextToken() != System.JSONToken.END_OBJECT) {
+				if (parser.getCurrentToken() == System.JSONToken.FIELD_NAME) {
+					String text = parser.getText();
+					if (parser.nextToken() != System.JSONToken.VALUE_NULL) {
+						if (text == 'value') {
+							value = parser.getText();
+						} else if (text == 'name') {
+							name = parser.getText();
+						} else {
+							System.debug(LoggingLevel.WARN, 'TaxCodeRef consuming unrecognized property: '+text);
+							consumeObject(parser);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public class TaxCodeRef {
 		public String value {get;set;} 
+		public String name {get;set;} 
 
 		public TaxCodeRef(JSONParser parser) {
 			while (parser.nextToken() != System.JSONToken.END_OBJECT) {
@@ -306,6 +432,8 @@ public class QBInvoiceQueryJSON {
 					if (parser.nextToken() != System.JSONToken.VALUE_NULL) {
 						if (text == 'value') {
 							value = parser.getText();
+						} else if (text == 'name') {
+							name = parser.getText();
 						} else {
 							System.debug(LoggingLevel.WARN, 'TaxCodeRef consuming unrecognized property: '+text);
 							consumeObject(parser);
@@ -414,6 +542,9 @@ public class QBInvoiceQueryJSON {
 	
 	public class LinkedTxn {
 
+		public String TxnId;
+		public String TxnType;
+
 		public LinkedTxn(JSONParser parser) {
 			while (parser.nextToken() != System.JSONToken.END_OBJECT) {
 				if (parser.getCurrentToken() == System.JSONToken.FIELD_NAME) {
@@ -422,6 +553,41 @@ public class QBInvoiceQueryJSON {
 						{
 							System.debug(LoggingLevel.WARN, 'LinkedTxn consuming unrecognized property: '+text);
 							consumeObject(parser);
+
+							if (text == 'TxnId') {
+								TxnId = parser.getText();
+							} else if (text == 'TxnType') {
+								TxnType = parser.getText();
+							} else {
+								System.debug(LoggingLevel.WARN, 'LinkedTxn consuming unrecognized property: '+text);
+								consumeObject(parser);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public class BillEmail {
+
+		public String Address;
+
+		public BillEmail(JSONParser parser) {
+			while (parser.nextToken() != System.JSONToken.END_OBJECT) {
+				if (parser.getCurrentToken() == System.JSONToken.FIELD_NAME) {
+					String text = parser.getText();
+					if (parser.nextToken() != System.JSONToken.VALUE_NULL) {
+						{
+							System.debug(LoggingLevel.WARN, 'LinkedTxn consuming unrecognized property: '+text);
+							consumeObject(parser);
+
+							if (text == 'Address') {
+								Address = parser.getText();
+							} else {
+								System.debug(LoggingLevel.WARN, 'LinkedTxn consuming unrecognized property: '+text);
+								consumeObject(parser);
+							}
 						}
 					}
 				}

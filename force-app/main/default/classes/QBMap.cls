@@ -1,11 +1,4 @@
-/**
- * Map QBO API JSON to SF Objects and vice versa
- * @author Justin Wills
- * @created 01/07/2020
- * @version v1.0
- */
-
- public class QBMap {
+public class QBMap {
 
     /**
      * Map the SF Account data to the QB customer JSON
@@ -17,14 +10,12 @@
 
         //Map given account fields
         customer.CompanyName = acc.Name;
-        customer.Taxable = True;
-        if(acc.Sellers_Permit__c != null){
-            customer.Taxable = False;
-            customer.TaxExemptionReasonId = '9';
+        customer.Taxable = acc.qime__Taxable__c;
+        if(!acc.qime__Taxable__c){
+            customer.TaxExemptionReasonId = acc.qime__Tax_Exemption_Reason__c;
             customer.ResaleNum = 'Resale';
-
         }        
-        customer.SyncToken = acc.QBO_SyncToken__c;
+        customer.SyncToken = acc.qime__QB_SyncToken__c;
         customer.sparse = True;
 
         //Create Shipping address
@@ -44,7 +35,7 @@
         //customer.PrimaryEmailAddr = acc.Email; //does not have correct mapping
         customer.Job = False;
         customer.IsProject = False;
-        customer.Id = acc.QBO_ID__c;
+        customer.Id = acc.qime__QB_ID__c;
         customer.DisplayName = acc.Name;
 
         //Create Billing Address
@@ -64,19 +55,6 @@
     }
 
     /**
-     * Map an invoice from QBO JSON to Salesforce
-     * @param inv The invoice that is used for the mapping
-     * @return The the invoice that can be crud to salesforce
-     */
-    public static Invoice__c mapInvoiceData(Invoice__c inv, QBInvoiceQueryJSON json){
-        if(json?.QueryResponse?.Invoice != null && json.QueryResponse.Invoice.size() > 0){
-            inv.qime__balance_Due__c = json?.QueryResponse?.Invoice[0]?.Balance;
-            inv.qime__QB_SyncToken__c = json?.QueryResponse?.Invoice[0]?.SyncToken;
-        }
-        return inv;
-    }
-
-    /**
      * Map an invoice from Salesforce to QBO JSON
      * @param inv The invoice that is used for the mapping
      * @return The json String that is used for the body of the request callout 
@@ -89,12 +67,8 @@
         invoiceObj.Id = inv.qime__QB_Id__c;
         invoiceObj.SyncToken = inv.qime__QB_SyncToken__c;
         invoiceObj.DueDate = inv.qime__Due_Date__c;
-        invoiceObj.AllowOnlineACHPayment = True;
-        invoiceObj.AllowOnlineCreditCardPayment = True;
-        if(inv.qime__subtotal__c > 12000){
-            invoiceObj.AllowOnlineACHPayment = False;
-            invoiceObj.AllowOnlineCreditCardPayment = False;
-        }
+        invoiceObj.AllowOnlineACHPayment = inv.qime__Allow_Online_ACH_Payment__c;
+        invoiceObj.AllowOnlineCreditCardPayment = inv.qime__Allow_Online_CC_Payment__c;
         invoiceObj.AutoDocNumber = True;
         invoiceObj.TxnTaxDetail = new QBInvoiceJSON.TxnTaxDetail();
         // // @todo unhardcode
@@ -153,7 +127,7 @@
             QBInvoiceJSON.Line line = new QBInvoiceJSON.Line();
             //map line item fields
             
-            line.Amount = ili.qime__UnitPrice__c * ili.qime__Quantity__c;
+            line.Amount = ili.qime__Unit_Price__c * ili.qime__Quantity__c;
             line.Description = ili.Product__r.qime__QB_Description__c;
 
             //@todo unhardcode this
@@ -165,7 +139,7 @@
             itemRef.value = ili.qime__qb_Id__c; 
             detail.ItemRef = itemRef;
             detail.Qty = ili.qime__Quantity__c;
-            detail.UnitPrice = ili.qime__UnitPrice__c;
+            detail.UnitPrice = ili.qime__Unit_Price__c;
             detail.TaxCodeRef = new QBInvoiceJSON.ItemRef();
             detail.TaxCodeRef.value = 'TAX';
             if(ili.qime__taxable__c){
@@ -178,7 +152,7 @@
         //Map Shipping fields
         QBInvoiceJSON.Line shippingLine = new QBInvoiceJSON.Line();
         shippingLine.Amount = inv.qime__Shipping_Handling__c;
-        if(inv.Shipping_Handling__c == null){
+        if(inv.qime__Shipping_Handling__c == null){
             shippingLine.Amount = 0;
         }
         shippingLine.DetailType = 'SalesItemLineDetail';
@@ -203,31 +177,170 @@
         return terms[0].qime__QB_ID__c;
     }
 
-        /**
+    /**
      * Map an invoice from QBO JSON to Salesforce
      * @param inv The invoice that is used for the mapping
+     * @param json Query json from QBO
      * @return The the invoice that can be crud to salesforce
      */
-    // public static invoiceReturn mapInvoiceData(Invoice__c inv, QBInvoiceQueryJSON json){
-    //     List<Payment__c> payments = new List<Payment__c>();
-    //     if(json.QueryResponse.Invoice.size() > 0){
-    //         inv.balance_Due__c = json.QueryResponse.Invoice[0].Balance;
-    //         for(QBInvoiceQueryJSON.Invoice invoice : json.QueryResponse.Invoice){
-    //             for(QBInvoiceQueryJSON.LinkedTxn txn : invoice.LinkedTxn){
-    //                 Payment__c p = new Payment__c();
-    //                 p.qbo_id__c = txn.TxnId;
-    //                 p.qbo_Invoice_id__c = invoice.Id;
-    //                 payments.add(p);
-    //             }
+    public static invoiceReturn mapInvoiceData(Invoice__c inv, QBInvoiceQueryJSON json){
+        List<qime__Payment__c> payments = new List<qime__Payment__c>();
+        List<qime__Invoice_Payment__c> inv_payments = new List<qime__Invoice_Payment__c>();
 
-    //         }
-    //     }
+        if(json.QueryResponse.Invoice.size() > 0){
+            inv.balance_Due__c = json.QueryResponse.Invoice[0].Balance;
+            for(QBInvoiceQueryJSON.Invoice invoice : json.QueryResponse.Invoice){
+                for(QBInvoiceQueryJSON.LinkedTxn txn : invoice.LinkedTxn){
+                    qime__Payment__c p = new qime__Payment__c();
+                    p.qb_id__c = txn.TxnId;
+                    payments.add(p);
 
-    //     invoiceReturn returnVar = new invoiceReturn();
-    //     returnVar.payments = payments;
-    //     returnVar.inv = inv;
-    //     return returnVar;
-    // }
+                    qime__Invoice_Payment__c inv_payment = new qime__Invoice_Payment__c();
+                    inv_payment.qime__Payment__r = new qime__Payment__c(qb_id__c = txn.TxnId);
+                    inv_payment.qime__Invoice__r = new qime__Invoice__c(qb_Id__c = invoice.Id);
+                    inv_payment.qime__QB_Invoice_Id__c = invoice.Id;
+                    inv_payment.qime__QB_Payment_Id__c = txn.TxnId;
+                    // Linked transactions have a unique id of inv id + payment id
+                    inv_payment.qime__qb_Id__c = invoice.Id + txn.TxnId;
+                    inv_payments.add(inv_payment);
+                }
+
+            }
+        }
+
+        invoiceReturn returnVar = new invoiceReturn();
+        returnVar.payments = payments;
+        returnVar.inv = inv;
+        return returnVar;
+    }
+
+    public class invoiceReturn {
+        public List<qime__Payment__c> payments{get; set;}
+        public List<qime__Invoice_Payment__c> invoice_payments{get; set;}
+        public qime__Invoice__c inv{get;set;}
+    }
+
+    public static Integer getCount(QBQueryResponseCountJSON count){
+        return count.QueryResponse.totalCount;
+    }
+
+    public static List<SObject> mapInvoices(QBInvoiceQueryJSON invQuery){
+        List<qime__Payment__c> payments = new List<qime__Payment__c>();
+        List<qime__Invoice_Payment__c> inv_payments = new List<qime__Invoice_Payment__c>();
+        List<qime__Invoice_Line_Item__c> ilis = new List<qime__Invoice_Line_Item__c>();
+        List<SObject> returnList = new List<SObject>();
+        if(invQuery?.QueryResponse?.Invoice == null){
+            return new List<SObject>();
+        }
+        for(QBInvoiceQueryJSON.Invoice invoice : invQuery?.QueryResponse?.Invoice){
+            qime__Invoice__c inv = new qime__Invoice__c();
+            Decimal subtotal = 0.0;
+            inv.qime__QB_ID__c = invoice.Id;
+            inv.qime__QB_SyncToken__c = invoice.SyncToken;
+            inv.qime__Document_Number__c = invoice.DocNumber;
+            inv.name = 'INV-' + invoice.DocNumber;
+            inv.qime__Transaction_Date__c = Date.valueOf(invoice.TxnDate);
+            inv.qime__Customer_Id__c = invoice.CustomerRef?.value;
+            try{
+                inv.Delivery_Time__c = (DateTime)Json.deserialize('"'+invoice?.DeliveryInfo?.DeliveryTime+'"', DateTime.class);
+            }catch(Exception e){
+                System.debug(e);
+            }
+
+            inv.Due_Date__c = Date.valueOf(invoice.DueDate);
+            inv.qime__Total__c = invoice.TotalAmt;
+            inv.qime__Memo__c = invoice?.CustomerMemo?.value;
+
+            inv.qime__emails__c = invoice.BillEmail?.Address;
+            inv.qime__bcc_emails__c = invoice.BillEmailBcc?.Address;
+            inv.qime__cc_emails__c = invoice.BillEmailCc?.Address;
+
+            inv.qime__Balance__c = invoice.Balance;
+            if(invoice?.TxnTaxDetail?.TotalTax != null){
+                inv.tax__c = invoice?.TxnTaxDetail?.TotalTax;
+            }
+            if(String.isNotBlank(invoice.SalesTermRef?.name)){
+                inv.Terms__c = invoice.SalesTermRef?.name; 
+            }
+
+            if(invoice?.LinkedTxn.size() > 0){
+                for(QBInvoiceQueryJSON.LinkedTxn txn : invoice.LinkedTxn){
+                    if(txn.TxnType != 'Payment'){
+                        continue;
+                    }
+                    qime__Payment__c p = new qime__Payment__c();
+                    p.qb_id__c = txn.TxnId;
+                    payments.add(p);
+
+                    qime__Invoice_Payment__c inv_payment = new qime__Invoice_Payment__c();
+                    inv_payment.qime__Payment__r = new qime__Payment__c(qb_id__c = txn.TxnId);
+                    inv_payment.qime__Invoice__r = new qime__Invoice__c(qb_Id__c = invoice.Id);
+                    inv_payment.qime__QB_Invoice_Id__c = invoice.Id;
+                    inv_payment.qime__QB_Payment_Id__c = txn.TxnId;
+                    // Linked transactions have a unique id of inv id + payment id
+                    inv_payment.qime__qb_Id__c = invoice.Id + txn.TxnId;
+                    inv_payments.add(inv_payment);
+                }
+            }
+
+            
+
+            if(String.isNotBlank(invoice?.PrivateNote)){
+                inv.Message_on_Statement__c = invoice?.PrivateNote;
+            }
+            Integer lineCount = 0;
+            for(QBInvoiceQueryJSON.Line line_item : invoice.Line){
+                qime__Invoice_Line_Item__c ili = new qime__Invoice_Line_Item__c();
+                qime__Invoice__c invRef = new qime__Invoice__c();
+                invRef.QB_Id__c = invoice.Id;
+                ili.QB_ID__c = invoice.Id + line_item.id;
+                ili.qime__LineNum__c = line_item.LineNum;
+                ili.qime__Amount__c = line_item.Amount;
+                if(line_item?.DetailType == 'SalesItemLineDetail'){
+                    ili.qime__ItemRef_Id__c = line_item?.SalesItemLineDetail?.ItemRef?.value;
+                    ili.Quantity__c = line_item?.SalesItemLineDetail?.Qty;
+                    ili.qime__Unit_Price__c = line_item?.SalesItemLineDetail?.UnitPrice;
+                    ili.qime__Description__c = line_item.Description;
+
+                }else if(line_item?.DetailType == 'GroupLineDetail'){
+
+                    ili.qime__ItemRef_Id__c = line_item?.GroupLineDetail?.GroupItemRef?.value;
+                    ili.qime__Quantity__c = line_item?.GroupLineDetail?.Quantity;
+                    ili.qime__Unit_Price__c = line_item?.GroupLineDetail?.Amount;
+                }
+                if(String.isNotBlank(line_item?.SalesItemLineDetail?.ServiceDate)){
+                    ili.Service_Date__C = Date.valueOf(line_item?.SalesItemLineDetail?.ServiceDate);
+                }
+                
+                ili.Invoice__r = invRef;
+                if(line_item?.SalesItemLineDetail?.TaxCodeRef?.value == 'TAX'){
+                    ili.Taxable__c = True;
+                }
+                if(line_item.DetailType == 'SubTotalLineDetail'){
+                    inv.Subtotal__c = line_item.Amount;
+                }else{
+                    lineCount ++;
+                }
+                if(line_item.DetailType == 'SalesItemLineDetail' && 
+                    line_item?.SalesItemLineDetail?.ItemRef?.value == 'SHIPPING_ITEM_ID'){
+                        inv.qime__Shipping_Handling__c = line_item.Amount;
+                }
+                if(line_item.DetailType == 'SalesItemLineDetail' || 
+                    line_item.DetailType == 'GroupLineDetail' ){
+                    ilis.add(ili);
+                }
+            }
+            inv.QB_Line_Count__c = lineCount;
+
+            returnList.add(inv);
+        }
+
+        returnList.addAll(payments);
+        returnList.addAll(inv_payments);
+        returnList.addAll(ilis);
+
+        return returnList;
+    }
 
     /**
      * Map an payment from QBO JSON to Salesforce
@@ -236,11 +349,38 @@
      */
     public static qime__Payment__c mapPaymentData(qime__Payment__c p, QBPaymentQueryJSON json){
         if(json.QueryResponse.Payment.size() > 0){
-            p.Amount__c = json.QueryResponse.Payment[0].TotalAmt;
+            p.qime__Amount__c = json.QueryResponse.Payment[0].TotalAmt;
             p.Transaction_Date__c = Date.valueOf(json.QueryResponse.Payment[0].TxnDate);
 
         }
         return p;
+    }
+
+    /**
+     * Map an payment from QBO JSON to Salesforce
+     * @param p The payment that is used for the mapping
+     * @return The the list of payments that can be crud to salesforce
+     */
+    public static List<qime__Payment__c> mapPayments(QBPaymentQueryJSON json){
+        List<qime__Payment__c> paymentList = new List<qime__Payment__c>();
+        if(json?.QueryResponse?.Payment == null){
+            return paymentList;
+        }
+
+        for(QBPaymentQueryJSON.Payment payment : json.QueryResponse.Payment){
+            qime__Payment__c p = new qime__Payment__c();
+            p.qime__Amount__c = payment.TotalAmt;
+            p.qime__Transaction_Date__c = Date.valueOf(payment.TxnDate);
+            if(payment?.CustomerRef?.value != null){
+                p.qime__customer_id__c = payment.CustomerRef.value;
+            }
+            p.qime__unapplied_amount__c = payment.UnappliedAmt;
+            p.qime__qb_Id__c = payment.Id;
+            p.qime__qb_SyncToken__c = payment.SyncToken;
+            paymentList.add(p);
+        }
+
+        return paymentList;
     }
 
 }

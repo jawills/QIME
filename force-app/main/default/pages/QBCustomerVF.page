@@ -1,0 +1,2 @@
+<apex:page standardcontroller="Account" extensions="QBCustomerController" action="{!syncQB}">
+</apex:page>

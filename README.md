@@ -6,7 +6,8 @@ A free, open-source Salesforce -> Quickbooks Online integration.
 
 - Create customers in Quickbooks from accounts in Salesforce
 - Create invoices in Salesforce and sync to Quickbooks online
-- Sync Payments to From Salesforce to Quickbooks
+- Sync Invoices from Quickbooks to Salesforce
+- Sync Payments from Quickbooks to Salesforce
 
 ## Requirements
 
@@ -14,4 +15,4 @@ A free, open-source Salesforce -> Quickbooks Online integration.
 
 ## Configure
 
-Please see my [write-up]() to learn how to configure this inside your org.
+Please see my [write-up]() to learn how to configure this inside your org. Additionally, you can see a visual tutorial on [youtube]().

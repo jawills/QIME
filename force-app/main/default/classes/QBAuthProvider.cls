@@ -93,7 +93,7 @@ global class QBAuthProvider extends Auth.AuthProviderPluginClass {
         System.debug(LoggingLevel.WARN, 'getUserInfo-response: ' + response);
         System.debug('provider: ' + response.provider);
         System.debug('state: ' + response.state);
-        return new Auth.UserData('fakeId', 'first', 'last', 'full', 'email', 'link', null, null, null, null, null);
+        return new Auth.UserData('fakeId', 'first', 'last', 'first last', 'email', 'link', 'locale', null, 'QBAuth', null, null);
 
     }
     

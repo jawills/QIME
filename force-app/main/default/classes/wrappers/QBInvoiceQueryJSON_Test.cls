@@ -15,219 +15,88 @@
 
 @IsTest
 public class QBInvoiceQueryJSON_Test {
+
+	public static String json = '{'+
+	'    \"QueryResponse\": {'+
+	'        \"Invoice\": ['+
+	'            {'+
+	'                \"Deposit\": 0,'+
+	'                \"AllowIPNPayment\": false,'+
+	'                \"AllowOnlinePayment\": false,'+
+	'                \"AllowOnlineCreditCardPayment\": false,'+
+	'                \"AllowOnlineACHPayment\": false,'+
+	'                \"domain\": \"QBO\",'+
+	'                \"sparse\": false,'+
+	'                \"Id\": \"147\",'+
+	'                \"SyncToken\": \"3\",'+
+	'                \"MetaData\": {'+
+	'                    \"CreateTime\": \"2019-10-06T21:06:24-07:00\",'+
+	'                    \"LastUpdatedTime\": \"2019-10-06T22:20:47-07:00\"'+
+	'                },'+
+	'                \"CustomField\": ['+
+	'                    {'+
+	'                        \"DefinitionId\": \"1\",'+
+	'                        \"Type\": \"StringType\"'+
+	'                    }'+
+	'                ],'+
+	'                \"DocNumber\": \"1040\",'+
+	'                \"TxnDate\": \"2019-10-06\",'+
+	'                \"CurrencyRef\": {'+
+	'                    \"value\": \"USD\",'+
+	'                    \"name\": \"United States Dollar\"'+
+	'                },'+
+	'                \"LinkedTxn\": [],'+
+	'                \"Line\": ['+
+	'                    {'+
+	'                        \"Id\": \"3\",'+
+	'                        \"LineNum\": 1,'+
+	'                        \"Amount\": 1000.00,'+
+	'                        \"DetailType\": \"SalesItemLineDetail\",'+
+	'                        \"SalesItemLineDetail\": {'+
+	'                            \"ItemRef\": {'+
+	'                                \"value\": \"19\",'+
+	'                                \"name\": \"Services\"'+
+	'                            },'+
+	'                            \"ItemAccountRef\": {'+
+	'                                \"value\": \"124\",'+
+	'                                \"name\": \"Services\"'+
+	'                            },'+
+	'                            \"TaxCodeRef\": {'+
+	'                                \"value\": \"NON\"'+
+	'                            }'+
+	'                        }'+
+	'                    },'+
+	'                    {'+
+	'                        \"Amount\": 1000.00,'+
+	'                        \"DetailType\": \"SubTotalLineDetail\",'+
+	'                        \"SubTotalLineDetail\": {}'+
+	'                    }'+
+	'                ],'+
+	'                \"CustomerRef\": {'+
+	'                    \"value\": \"65\",'+
+	'                    \"name\": \"Test Account\"'+
+	'                },'+
+	'                \"SalesTermRef\": {'+
+	'                    \"value\": \"7\"'+
+	'                },'+
+	'                \"DueDate\": \"2019-10-21\",'+
+	'                \"TotalAmt\": 1000.00,'+
+	'                \"ApplyTaxAfterDiscount\": false,'+
+	'                \"PrintStatus\": \"NeedToPrint\",'+
+	'                \"EmailStatus\": \"NotSet\",'+
+	'                \"Balance\": 1000.00'+
+	'            }'+
+	'        ],'+
+	'        \"startPosition\": 1,'+
+	'        \"maxResults\": 3,'+
+	'        \"totalCount\": 3'+
+	'    },'+
+	'    \"time\": \"2019-10-06T23:08:55.920-07:00\"'+
+	'}';
 	
 	// This test method should give 100% coverage
 	static testMethod void testParse() {
-		String json = '{'+
-		'    \"QueryResponse\": {'+
-		'        \"Invoice\": ['+
-		'            {'+
-		'                \"Deposit\": 0,'+
-		'                \"AllowIPNPayment\": false,'+
-		'                \"AllowOnlinePayment\": false,'+
-		'                \"AllowOnlineCreditCardPayment\": false,'+
-		'                \"AllowOnlineACHPayment\": false,'+
-		'                \"domain\": \"QBO\",'+
-		'                \"sparse\": false,'+
-		'                \"Id\": \"147\",'+
-		'                \"SyncToken\": \"3\",'+
-		'                \"MetaData\": {'+
-		'                    \"CreateTime\": \"2019-10-06T21:06:24-07:00\",'+
-		'                    \"LastUpdatedTime\": \"2019-10-06T22:20:47-07:00\"'+
-		'                },'+
-		'                \"CustomField\": ['+
-		'                    {'+
-		'                        \"DefinitionId\": \"1\",'+
-		'                        \"Type\": \"StringType\"'+
-		'                    }'+
-		'                ],'+
-		'                \"DocNumber\": \"1040\",'+
-		'                \"TxnDate\": \"2019-10-06\",'+
-		'                \"CurrencyRef\": {'+
-		'                    \"value\": \"USD\",'+
-		'                    \"name\": \"United States Dollar\"'+
-		'                },'+
-		'                \"LinkedTxn\": [],'+
-		'                \"Line\": ['+
-		'                    {'+
-		'                        \"Id\": \"3\",'+
-		'                        \"LineNum\": 1,'+
-		'                        \"Amount\": 1000.00,'+
-		'                        \"DetailType\": \"SalesItemLineDetail\",'+
-		'                        \"SalesItemLineDetail\": {'+
-		'                            \"ItemRef\": {'+
-		'                                \"value\": \"19\",'+
-		'                                \"name\": \"Services\"'+
-		'                            },'+
-		'                            \"ItemAccountRef\": {'+
-		'                                \"value\": \"124\",'+
-		'                                \"name\": \"Services\"'+
-		'                            },'+
-		'                            \"TaxCodeRef\": {'+
-		'                                \"value\": \"NON\"'+
-		'                            }'+
-		'                        }'+
-		'                    },'+
-		'                    {'+
-		'                        \"Amount\": 1000.00,'+
-		'                        \"DetailType\": \"SubTotalLineDetail\",'+
-		'                        \"SubTotalLineDetail\": {}'+
-		'                    }'+
-		'                ],'+
-		'                \"CustomerRef\": {'+
-		'                    \"value\": \"65\",'+
-		'                    \"name\": \"Test Account\"'+
-		'                },'+
-		'                \"SalesTermRef\": {'+
-		'                    \"value\": \"7\"'+
-		'                },'+
-		'                \"DueDate\": \"2019-10-21\",'+
-		'                \"TotalAmt\": 1000.00,'+
-		'                \"ApplyTaxAfterDiscount\": false,'+
-		'                \"PrintStatus\": \"NeedToPrint\",'+
-		'                \"EmailStatus\": \"NotSet\",'+
-		'                \"Balance\": 1000.00'+
-		'            },'+
-		'            {'+
-		'                \"Deposit\": 0,'+
-		'                \"AllowIPNPayment\": false,'+
-		'                \"AllowOnlinePayment\": false,'+
-		'                \"AllowOnlineCreditCardPayment\": false,'+
-		'                \"AllowOnlineACHPayment\": false,'+
-		'                \"domain\": \"QBO\",'+
-		'                \"sparse\": false,'+
-		'                \"Id\": \"146\",'+
-		'                \"SyncToken\": \"0\",'+
-		'                \"MetaData\": {'+
-		'                    \"CreateTime\": \"2019-10-06T17:48:00-07:00\",'+
-		'                    \"LastUpdatedTime\": \"2019-10-06T17:48:00-07:00\"'+
-		'                },'+
-		'                \"CustomField\": ['+
-		'                    {'+
-		'                        \"DefinitionId\": \"1\",'+
-		'                        \"Type\": \"StringType\"'+
-		'                    }'+
-		'                ],'+
-		'                \"DocNumber\": \"1039\",'+
-		'                \"TxnDate\": \"2019-10-06\",'+
-		'                \"CurrencyRef\": {'+
-		'                    \"value\": \"USD\",'+
-		'                    \"name\": \"United States Dollar\"'+
-		'                },'+
-		'                \"LinkedTxn\": [],'+
-		'                \"Line\": ['+
-		'                    {'+
-		'                        \"Id\": \"1\",'+
-		'                        \"LineNum\": 1,'+
-		'                        \"Amount\": 100.00,'+
-		'                        \"DetailType\": \"SalesItemLineDetail\",'+
-		'                        \"SalesItemLineDetail\": {'+
-		'                            \"ItemRef\": {'+
-		'                                \"value\": \"19\",'+
-		'                                \"name\": \"Services\"'+
-		'                            },'+
-		'                            \"ItemAccountRef\": {'+
-		'                                \"value\": \"124\",'+
-		'                                \"name\": \"Services\"'+
-		'                            },'+
-		'                            \"TaxCodeRef\": {'+
-		'                                \"value\": \"NON\"'+
-		'                            }'+
-		'                        }'+
-		'                    },'+
-		'                    {'+
-		'                        \"Amount\": 100.00,'+
-		'                        \"DetailType\": \"SubTotalLineDetail\",'+
-		'                        \"SubTotalLineDetail\": {}'+
-		'                    }'+
-		'                ],'+
-		'                \"CustomerRef\": {'+
-		'                    \"value\": \"64\",'+
-		'                    \"name\": \"Test test\"'+
-		'                },'+
-		'                \"DueDate\": \"2019-10-06\",'+
-		'                \"TotalAmt\": 100.00,'+
-		'                \"ApplyTaxAfterDiscount\": false,'+
-		'                \"PrintStatus\": \"NeedToPrint\",'+
-		'                \"EmailStatus\": \"NotSet\",'+
-		'                \"Balance\": 100.00'+
-		'            },'+
-		'            {'+
-		'                \"Deposit\": 0,'+
-		'                \"AllowIPNPayment\": false,'+
-		'                \"AllowOnlinePayment\": false,'+
-		'                \"AllowOnlineCreditCardPayment\": false,'+
-		'                \"AllowOnlineACHPayment\": false,'+
-		'                \"domain\": \"QBO\",'+
-		'                \"sparse\": false,'+
-		'                \"Id\": \"145\",'+
-		'                \"SyncToken\": \"0\",'+
-		'                \"MetaData\": {'+
-		'                    \"CreateTime\": \"2019-10-06T17:03:49-07:00\",'+
-		'                    \"LastUpdatedTime\": \"2019-10-06T17:03:49-07:00\"'+
-		'                },'+
-		'                \"CustomField\": ['+
-		'                    {'+
-		'                        \"DefinitionId\": \"1\",'+
-		'                        \"Type\": \"StringType\"'+
-		'                    }'+
-		'                ],'+
-		'                \"DocNumber\": \"1038\",'+
-		'                \"TxnDate\": \"2019-10-06\",'+
-		'                \"CurrencyRef\": {'+
-		'                    \"value\": \"USD\",'+
-		'                    \"name\": \"United States Dollar\"'+
-		'                },'+
-		'                \"LinkedTxn\": [],'+
-		'                \"Line\": ['+
-		'                    {'+
-		'                        \"Id\": \"1\",'+
-		'                        \"LineNum\": 1,'+
-		'                        \"Amount\": 225.00,'+
-		'                        \"DetailType\": \"SalesItemLineDetail\",'+
-		'                        \"SalesItemLineDetail\": {'+
-		'                            \"ItemRef\": {'+
-		'                                \"value\": \"19\",'+
-		'                                \"name\": \"Services\"'+
-		'                            },'+
-		'                            \"UnitPrice\": 225,'+
-		'                            \"Qty\": 1,'+
-		'                            \"ItemAccountRef\": {'+
-		'                                \"value\": \"124\",'+
-		'                                \"name\": \"Services\"'+
-		'                            },'+
-		'                            \"TaxCodeRef\": {'+
-		'                                \"value\": \"NON\"'+
-		'                            }'+
-		'                        }'+
-		'                    },'+
-		'                    {'+
-		'                        \"Amount\": 225.00,'+
-		'                        \"DetailType\": \"SubTotalLineDetail\",'+
-		'                        \"SubTotalLineDetail\": {}'+
-		'                    }'+
-		'                ],'+
-		'                \"CustomerRef\": {'+
-		'                    \"value\": \"64\",'+
-		'                    \"name\": \"Test test\"'+
-		'                },'+
-		'                \"CustomerMemo\": {'+
-		'                    \"value\": \"Thank you for your business and have a great day!\"'+
-		'                },'+
-		'                \"DueDate\": \"2019-10-06\",'+
-		'                \"TotalAmt\": 225.00,'+
-		'                \"ApplyTaxAfterDiscount\": false,'+
-		'                \"PrintStatus\": \"NeedToPrint\",'+
-		'                \"EmailStatus\": \"NotSet\",'+
-		'                \"Balance\": 225.00'+
-		'            }'+
-		'        ],'+
-		'        \"startPosition\": 1,'+
-		'        \"maxResults\": 3,'+
-		'        \"totalCount\": 3'+
-		'    },'+
-		'    \"time\": \"2019-10-06T23:08:55.920-07:00\"'+
-		'}';
+
 		QBInvoiceQueryJSON r = QBInvoiceQueryJSON.parse(json);
 		System.assert(r != null);
 
