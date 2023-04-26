@@ -347,20 +347,6 @@ public class QBMap {
     /**
      * Map an payment from QBO JSON to Salesforce
      * @param p The payment that is used for the mapping
-     * @return The the payment that can be crud to salesforce
-     */
-    public static qime__Payment__c mapPaymentData(qime__Payment__c p, QBPaymentQueryJSON json){
-        if(json.QueryResponse.Payment.size() > 0){
-            p.qime__Amount__c = json.QueryResponse.Payment[0].TotalAmt;
-            p.Transaction_Date__c = Date.valueOf(json.QueryResponse.Payment[0].TxnDate);
-
-        }
-        return p;
-    }
-
-    /**
-     * Map an payment from QBO JSON to Salesforce
-     * @param p The payment that is used for the mapping
      * @return The the list of payments that can be crud to salesforce
      */
     public static List<qime__Payment__c> mapPayments(QBPaymentQueryJSON json){
