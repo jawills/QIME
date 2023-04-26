@@ -168,9 +168,9 @@ public class QBMap {
         if(String.isBlank(term)){
             return null;
         }
-        List<qime__QB_Term__mdt> terms = [SELECT Id, qime__QB_ID__c
-                                            FROM qime__QB_Term__mdt 
-                                            WHERE label =: term];
+        List<qime__QB_Term__c> terms = [SELECT Id, qime__QB_ID__c
+                                            FROM qime__QB_Term__c 
+                                            WHERE Name =: term];
         if(terms.size() == 0){
             throw new QBException('Please map the term id for ' + term );
         }
@@ -237,17 +237,19 @@ public class QBMap {
             Decimal subtotal = 0.0;
             inv.qime__QB_ID__c = invoice.Id;
             inv.qime__QB_SyncToken__c = invoice.SyncToken;
+            inv.qime__Allow_Online_ACH_Payment__c = invoice.AllowOnlineACHPayment;
+            inv.qime__Allow_Online_CC_Payment__c = invoice.AllowOnlineCreditCardPayment;
             inv.qime__Document_Number__c = invoice.DocNumber;
             inv.name = 'INV-' + invoice.DocNumber;
             inv.qime__Transaction_Date__c = Date.valueOf(invoice.TxnDate);
             inv.qime__Customer_Id__c = invoice.CustomerRef?.value;
             try{
-                inv.Delivery_Time__c = (DateTime)Json.deserialize('"'+invoice?.DeliveryInfo?.DeliveryTime+'"', DateTime.class);
+                inv.qime__Delivery_Time__c = (DateTime)Json.deserialize('"'+invoice?.DeliveryInfo?.DeliveryTime+'"', DateTime.class);
             }catch(Exception e){
                 System.debug(e);
             }
 
-            inv.Due_Date__c = Date.valueOf(invoice.DueDate);
+            inv.qime__Due_Date__c = Date.valueOf(invoice.DueDate);
             inv.qime__Total__c = invoice.TotalAmt;
             inv.qime__Memo__c = invoice?.CustomerMemo?.value;
 
@@ -257,10 +259,10 @@ public class QBMap {
 
             inv.qime__Balance__c = invoice.Balance;
             if(invoice?.TxnTaxDetail?.TotalTax != null){
-                inv.tax__c = invoice?.TxnTaxDetail?.TotalTax;
+                inv.qime__tax__c = invoice?.TxnTaxDetail?.TotalTax;
             }
             if(String.isNotBlank(invoice.SalesTermRef?.name)){
-                inv.Terms__c = invoice.SalesTermRef?.name; 
+                inv.qime__Terms__c = invoice.SalesTermRef?.name; 
             }
 
             if(invoice?.LinkedTxn.size() > 0){
@@ -381,6 +383,23 @@ public class QBMap {
         }
 
         return paymentList;
+    }
+
+    /**
+     * Map terms to custom setting values
+     * @param termsQuery query of terms from QB
+     * @return List of custom setting values for upsert
+     */
+    public static List<QIME__QB_Term__c> mapTermsQuery(QBTermJSON termsQuery){
+        List<qime__QB_Term__c> terms = new List<qime__QB_Term__c>();
+        for(QBTermJSON.Term term : termsQuery.QueryResponse.Term ){
+            qime__QB_Term__c t = new qime__QB_Term__c();
+            t.qime__QB_Id__c = term.Id;
+            t.Name = term.Name;
+            terms.add(t);
+        }
+
+        return terms;
     }
 
 }
