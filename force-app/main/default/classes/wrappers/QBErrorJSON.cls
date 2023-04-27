@@ -81,7 +81,7 @@ public class QBErrorJSON {
 	
 	public static void consumeObject(System.JSONParser parser) {
 		Integer depth = 0;
-		do {
+		do { 
 			System.JSONToken curr = parser.getCurrentToken();
 			if (curr == System.JSONToken.START_OBJECT || 
 				curr == System.JSONToken.START_ARRAY) {

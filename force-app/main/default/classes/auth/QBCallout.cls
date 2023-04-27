@@ -107,7 +107,7 @@ public class QBCallout {
 
     public static QBTermJSON queryTerms(){
         HttpResponse res = calloutHelper('query', 'POST', 'select * from Term');
-        return QBTermJSON.parse(res.getBody());
+        return QBTermJSON.parse(res.getBody()); 
     }
 
 
