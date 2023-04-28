@@ -62,7 +62,9 @@ public class QBMap {
     public static String mapInvoice(Invoice__c inv, List<qime__Invoice_Line_Item__c> ilis, String customerId){
         //Initialize invoice object
         QBInvoiceJSON invoiceObj = new QBInvoiceJSON();
-
+        qime__QIME_Config__mdt config = [SELECT Id, qime__Use_Single_Line_Item__c, qime__Line_Item_Id__c 
+                                            FROM qime__QIME_Config__mdt 
+                                            WHERE Label = 'Default'];
 
         invoiceObj.Id = inv.qime__QB_Id__c;
         invoiceObj.SyncToken = inv.qime__QB_SyncToken__c;
@@ -122,32 +124,50 @@ public class QBMap {
 
         //Initialize line items for invoice mapping
         invoiceObj.Line = new List<QBInvoiceJSON.Line>();
-
-        for(Invoice_Line_Item__c ili : ilis){
+        if(config.qime__Use_Single_Line_Item__c){
             QBInvoiceJSON.Line line = new QBInvoiceJSON.Line();
-            //map line item fields
-            
-            line.Amount = ili.qime__Unit_Price__c * ili.qime__Quantity__c;
-            line.Description = ili.Product__r.qime__QB_Description__c;
-
+            line.Amount = inv.Subtotal__c;
             //@todo unhardcode this
             line.DetailType = 'SalesItemLineDetail';
             QBInvoiceJSON.SalesItemLineDetail detail = new QBInvoiceJSON.SalesItemLineDetail();
 
             QBInvoiceJSON.ItemRef itemRef = new QBInvoiceJSON.ItemRef();
 
-            itemRef.value = ili.qime__qb_Id__c; 
-            detail.ItemRef = itemRef;
-            detail.Qty = ili.qime__Quantity__c;
-            detail.UnitPrice = ili.qime__Unit_Price__c;
+            itemRef.value = config.qime__Line_Item_Id__c; 
+            detail.Qty = 1.0;
             detail.TaxCodeRef = new QBInvoiceJSON.ItemRef();
             detail.TaxCodeRef.value = 'TAX';
-            if(ili.qime__taxable__c){
-                detail.TaxCodeRef.value = 'NON';
-            }
             line.SalesItemLineDetail = detail;
             invoiceObj.Line.add(line);
+
+        }else if(ilis != null){
+            for(Invoice_Line_Item__c ili : ilis){
+                QBInvoiceJSON.Line line = new QBInvoiceJSON.Line();
+                //map line item fields
+                
+                line.Amount = ili.qime__Unit_Price__c * ili.qime__Quantity__c;
+                line.Description = ili.Product__r.qime__QB_Description__c;
+    
+                //@todo unhardcode this
+                line.DetailType = 'SalesItemLineDetail';
+                QBInvoiceJSON.SalesItemLineDetail detail = new QBInvoiceJSON.SalesItemLineDetail();
+    
+                QBInvoiceJSON.ItemRef itemRef = new QBInvoiceJSON.ItemRef();
+    
+                itemRef.value = ili.qime__qb_Id__c; 
+                detail.ItemRef = itemRef;
+                detail.Qty = ili.qime__Quantity__c;
+                detail.UnitPrice = ili.qime__Unit_Price__c;
+                detail.TaxCodeRef = new QBInvoiceJSON.ItemRef();
+                detail.TaxCodeRef.value = 'TAX';
+                if(ili.qime__taxable__c){
+                    detail.TaxCodeRef.value = 'NON';
+                }
+                line.SalesItemLineDetail = detail;
+                invoiceObj.Line.add(line);
+            }
         }
+
 
         //Map Shipping fields
         QBInvoiceJSON.Line shippingLine = new QBInvoiceJSON.Line();
