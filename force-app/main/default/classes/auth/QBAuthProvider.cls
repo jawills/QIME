@@ -6,7 +6,7 @@ global class QBAuthProvider extends Auth.AuthProviderPluginClass {
     private String scope;
     private String authUrl;    // application redirection to the Concur website for authentication and authorization
     private String accessTokenUrl; // uri to get the new access token from concur  using the GET verb
-    private String customMetadataTypeApiName = 'QB_Credential__mdt';
+    private String customMetadataTypeApiName = 'qime__QB_Credential__mdt';
     private String userAPIUrl; // api url to access the user in concur
     private String userAPIVersionUrl; // version of the user api url to access data from concur
 
