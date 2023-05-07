@@ -22,4 +22,4 @@ Sandbox -- xx
 
 ## Configure
 
-Please see my [write-up]() to learn how to configure this inside your org. Additionally, you can see a visual tutorial on [youtube]().
+Please see my [write-up](https://g2technologies.com/blogs/learn/supercharge-your-salesforce-qbo-integration-today) to learn how to configure this inside your org. Additionally, you can see a visual tutorial on [youtube]().
