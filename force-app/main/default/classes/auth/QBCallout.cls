@@ -16,7 +16,12 @@ public class QBCallout {
         if(Test.isRunningTest()){
             credentials = QBTestHelper.getCredential();
         }else{
-            credentials = [SELECT Id, Realm_Id__c, MinorVersion__c FROM QIME__QB_Credential__mdt WHERE DeveloperName = 'QB_Provider'];
+            List<QIME__QB_Credential__mdt> creds = [SELECT Id, Realm_Id__c, MinorVersion__c FROM QIME__QB_Credential__mdt WHERE DeveloperName = 'QB_Auth_Provider'];
+            if(creds.size() > 0){
+                credentials = creds[0];
+            }else{
+                throw new QBException('Please ensure your auth provider has the Developer Name: \'QB_Auth_Provider\'');
+            }
         }
         
         HttpRequest req = new HttpRequest();
