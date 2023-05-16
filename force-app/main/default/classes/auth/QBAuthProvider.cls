@@ -77,6 +77,7 @@ global class QBAuthProvider extends Auth.AuthProviderPluginClass {
         req.setHeader('Accept','application/json');
 
         String header = 'Basic ' + EncodingUtil.base64Encode(Blob.valueOf(clientId + ':' + clientSecret));
+        req.setHeader('Authorization', header);
 
         String body = 'grant_type=refresh_token&refresh_token=' + refreshToken;
         req.setBody(body);

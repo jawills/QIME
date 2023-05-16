@@ -37,14 +37,14 @@ public class InvoiceTriggerHandler {
     private static void linkOpportunities(List<qime__Invoice__c> invoices){
         qime__QIME_Config__mdt config;
         if(!Test.isRunningTest()){
-            config = [SELECT Id, qime__Link_Invoice_To_Opp_Using_Memo__c 
+            config = [SELECT Id, qime__Link_By_Memo__c 
                         FROM qime__QIME_Config__mdt 
                         WHERE Label = 'Default'];
         }else{
             config = QBTestHelper.getConfig();
         }
         
-        if(!config.qime__Link_Invoice_To_Opp_Using_Memo__c){
+        if(!config.qime__Link_By_Memo__c){
             return;
         }
         Set<Id> oppIds = new Set<Id>();

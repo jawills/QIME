@@ -44,12 +44,31 @@
 
     }
 
+    @isTest static void testCreateController(){
+        Test.setMock(HttpCalloutMock.class, new QBMock());
+
+        qime__Invoice__c inv = QBInvoiceHelper.getInvoice([SELECT Id FROM qime__Invoice__c WHERE Name = 'INV-XXXX'].Id);
+
+        Test.startTest();
+
+        PageReference pageRef = Page.QBInvoiceVF; // Add your VF page Name here
+        pageRef.getParameters().put('Id', String.valueOf(inv.Id));
+        Test.setCurrentPage(pageRef);
+        ApexPages.StandardController stdInvoice = new ApexPages.StandardController(inv);
+        QBInvoiceCreate_Controller controller = new QBInvoiceCreate_Controller(stdInvoice);
+        controller.syncQB();
+        Test.stopTest();
+
+        System.assert(controller != null);
+
+    }
+
     @isTest static void testInvoiceCreate(){
         Test.setMock(HttpCalloutMock.class, new QBMock());
         qime__Invoice__c inv = QBInvoiceHelper.getInvoice([SELECT Id FROM qime__Invoice__c WHERE Name = 'INV-XXXX'].Id);
         List<qime__Invoice_Line_Item__c> ilis = getILIs(inv.Id);
         Test.startTest();
-        QBInvoiceJSON invoice = QBCallout.createInvoice(QBMap.mapInvoice(inv, ilis, 'testId'));
+        QBInvoiceResponseJSON invoice = QBCallout.createInvoice(QBMap.mapInvoice(inv, ilis, 'testId'));
         Test.stopTest();
 
         System.assert(invoice != null);

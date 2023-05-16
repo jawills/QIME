@@ -10,8 +10,8 @@ global class QBTermBatch implements Database.Batchable<sobject>,Database.AllowsC
     
     global void Execute(Database.BatchableContext BC,List<Account> accList){
         QBTermJSON queryJson = QBCallout.queryTerms();
-        List<qime__QB_Term__c> terms = QBMap.mapTermsQuery(queryJson);
-        Database.upsert(terms, qime__QB_Term__c.qime__QB_Id__c, false);
+        List<qime__QB_Terms__c> terms = QBMap.mapTermsQuery(queryJson);
+        Database.upsert(terms, qime__QB_Terms__c.qime__QB_Id__c, false);
     } 
     global void finish(Database.BatchableContext BC){
         System.debug('Finished');

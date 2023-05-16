@@ -62,7 +62,7 @@ public class QBMap {
     public static String mapInvoice(Invoice__c inv, List<qime__Invoice_Line_Item__c> ilis, String customerId){
         //Initialize invoice object
         QBInvoiceJSON invoiceObj = new QBInvoiceJSON();
-        qime__QIME_Config__mdt config = [SELECT Id, qime__Use_Single_Line_Item__c, qime__Line_Item_Id__c 
+        qime__QIME_Config__mdt config = [SELECT Id, qime__Use_Line_Item__c, qime__QB_Product_Id__c 
                                             FROM qime__QIME_Config__mdt 
                                             WHERE Label = 'Default'];
 
@@ -124,7 +124,7 @@ public class QBMap {
 
         //Initialize line items for invoice mapping
         invoiceObj.Line = new List<QBInvoiceJSON.Line>();
-        if(config.qime__Use_Single_Line_Item__c){
+        if(config.qime__Use_Line_Item__c){
             QBInvoiceJSON.Line line = new QBInvoiceJSON.Line();
             line.Amount = inv.Subtotal__c;
             //@todo unhardcode this
@@ -133,7 +133,7 @@ public class QBMap {
 
             QBInvoiceJSON.ItemRef itemRef = new QBInvoiceJSON.ItemRef();
 
-            itemRef.value = config.qime__Line_Item_Id__c; 
+            itemRef.value = config.qime__QB_Product_Id__c; 
             detail.Qty = 1.0;
             detail.TaxCodeRef = new QBInvoiceJSON.ItemRef();
             detail.TaxCodeRef.value = 'TAX';
@@ -188,8 +188,8 @@ public class QBMap {
         if(String.isBlank(term)){
             return null;
         }
-        List<qime__QB_Term__c> terms = [SELECT Id, qime__QB_ID__c
-                                            FROM qime__QB_Term__c 
+        List<qime__QB_Terms__c> terms = [SELECT Id, qime__QB_ID__c
+                                            FROM qime__QB_Terms__c 
                                             WHERE Name =: term];
         if(terms.size() == 0){
             throw new QBException('Please map the term id for ' + term );
@@ -232,6 +232,37 @@ public class QBMap {
         returnVar.payments = payments;
         returnVar.inv = inv;
         return returnVar;
+    }
+
+        /**
+     * Map an invoice from QBO JSON to Salesforce
+     * @param inv The invoice that is used for the mapping
+     * @param json Query json from QBO
+     * @return The the invoice that can be crud to salesforce
+     */
+    public static List<SObject> mapInvoiceData(Invoice__c inv, List<qime__Invoice_Line_Item__c> ilis, QBInvoiceResponseJSON json){
+        List<SObject> returnList = new List<SObject>();
+        // Key: QB Product Id, Value: Line Item Id
+        Map<String,String> lineItemMap = new Map<String,String>();
+        inv.QB_ID__c = json.Invoice.Id;
+        inv.QB_SyncToken__c = json.Invoice.SyncToken;
+        inv.balance_Due__c = json.Invoice.Balance;
+
+        for(QBInvoiceResponseJSON.Line ili : json.Invoice.Line){
+            if(String.isNotBlank(ili?.SalesItemLineDetail?.ItemRef?.value)){
+                lineItemMap.put(ili.SalesItemLineDetail.ItemRef.value, ili.Id);
+            }
+        }
+
+        for(qime__Invoice_Line_Item__c ili : ilis){
+            if(lineItemMap.containsKey(ili.qime__ItemRef_Id__c)){
+                ili.qime__QB_Id__c = lineItemMap.get(ili.qime__ItemRef_Id__c);
+            }
+        }
+
+        returnList.add(inv);
+        returnList.addAll(ilis);
+        return returnList;
     }
 
     public class invoiceReturn {
@@ -396,10 +427,10 @@ public class QBMap {
      * @param termsQuery query of terms from QB
      * @return List of custom setting values for upsert
      */
-    public static List<QIME__QB_Term__c> mapTermsQuery(QBTermJSON termsQuery){
-        List<qime__QB_Term__c> terms = new List<qime__QB_Term__c>();
+    public static List<qime__QB_Terms__c> mapTermsQuery(QBTermJSON termsQuery){
+        List<qime__QB_Terms__c> terms = new List<qime__QB_Terms__c>();
         for(QBTermJSON.Term term : termsQuery.QueryResponse.Term ){
-            qime__QB_Term__c t = new qime__QB_Term__c();
+            qime__QB_Terms__c t = new qime__QB_Terms__c();
             t.qime__QB_Id__c = term.Id;
             t.Name = term.Name;
             terms.add(t);

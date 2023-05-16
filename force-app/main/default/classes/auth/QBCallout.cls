@@ -34,15 +34,25 @@ public class QBCallout {
         req.setEndpoint('callout:QB_Named_Credential/' + url);
         req.setMethod(method);
         if(body != null){
+            System.debug(body);
             req.setBody(body);
         }
         req.setheader('Accept', 'application/json');
         req.setHeader('Content-Type', 'application/json');
         req.setHeader('Authorization', 'Bearer {!$Credential.OAuthToken}');
-        System.debug(req.getHeader('Authorization'));
+
+        if(endpoint.contains('query')){
+            req.setHeader('Content-Type', 'application/text');
+        }
+        
 
         Http http = new Http();
-        HTTPResponse res = http.send(req);
+        HTTPResponse res;
+        try{
+            res = http.send(req);
+        }catch(Exception e){
+            throw new QBException(e.getMessage());
+        }
         System.debug(res.getBody());
         handleResponseError(res.getBody());
         return res;
@@ -62,7 +72,7 @@ public class QBCallout {
     }
 
     public static QBCustomerJSON getCustomer(Account a){
-        String query = 'select * from customer where id =\'' + a.QIME__QB_Id__c + '\'';
+        String query = 'select * from customer where id = \'' + a.QIME__QB_Id__c + '\'';
         HttpResponse res = calloutHelper('query', 'POST', query);
         return QBCustomerJSON.parse(res.getBody());
     }
@@ -74,7 +84,7 @@ public class QBCallout {
     }
 
     public static QBInvoiceQueryJSON getInvoice(Invoice__c inv){
-        String query = 'select * from invoice where id =\'' + inv.QIME__QB_Id__c + '\'';
+        String query = 'select * from invoice where id = \'' + inv.QIME__QB_Id__c + '\'';
         HttpResponse res = calloutHelper('query', 'POST', query);
         return QBInvoiceQueryJSON.parse(res.getBody());
     }
@@ -89,13 +99,13 @@ public class QBCallout {
         return QBInvoiceQueryJSON.parse(res.getBody());
     }
 
-    public static QBInvoiceJSON createInvoice(String invoiceJson){
+    public static QBInvoiceResponseJSON createInvoice(String invoiceJson){
         HttpResponse res = calloutHelper('invoice', 'POST', invoiceJson);
-        return QBInvoiceJSON.parse(res.getBody());
+        return QBInvoiceResponseJSON.parse(res.getBody());
     }
 
     public static QBPaymentQueryJSON getPayment(Payment__c pmt){
-        String query = 'select * from payment where id =\'' + pmt.QIME__QB_Id__c + '\'';
+        String query = 'select * from payment where id = \'' + pmt.QIME__QB_Id__c + '\'';
         HttpResponse res = calloutHelper('query', 'POST', query);
         return QBPaymentQueryJSON.parse(res.getBody());
     }
