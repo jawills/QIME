@@ -127,13 +127,13 @@ public class QBInvoiceHelper {
             }
         }
 
-        Database.UpsertResult [] invoiceResults = Database.upsert(invList,qime__Invoice__c.QB_Id__c,false);
+        Database.UpsertResult [] invoiceResults = Database.upsert(invList,false);
         for(Database.UpsertResult result : invoiceResults){
             if(!result.success){
                 System.debug(result.errors);
             }
         }
-        Database.UpsertResult [] iliResults = Database.upsert(iliList,qime__Invoice_Line_Item__c.QB_Id__c,false);
+        Database.UpsertResult [] iliResults = Database.upsert(iliList,false);
         for(Database.UpsertResult result : iliResults){
             if(!result.success){
                 System.debug(result.errors);
@@ -171,7 +171,8 @@ public class QBInvoiceHelper {
                        qime__Ship_Country__c,
                        (SELECT Id, qime__Unit_Price__c, qime__Quantity__c, 
                                 qime__Amount__c, qime__ItemRef_Id__c, qime__QB_Id__c,
-                                qime__Product__r.qime__QB_Id__c, qime__LineNum__c, 
+                                qime__Product__r.qime__QB_Id__c, qime__Product__r.qime__QB_Description__c,
+                                 qime__LineNum__c, 
                                 qime__Product__c, qime__Description__c, qime__Taxable__c,
                                 qime__Service_Date__c
                        FROM qime__Invoice_Line_Items__r)

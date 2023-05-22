@@ -9,7 +9,7 @@ global class QBPaymentBatch implements Database.Batchable<sobject>,Database.Allo
     }
     
     global void Execute(Database.BatchableContext BC,List<Account> accList){
-        String query = 'select * from Invoice WHERE Metadata.LastUpdatedTime > \'' + String.valueOf(Datetime.now().addhours(-2).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'')) + '\'';
+        String query = 'select * from Payment WHERE Metadata.LastUpdatedTime > \'' + String.valueOf(Datetime.now().addhours(-2).formatGMT('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'')) + '\'';
         QBPaymentQueryJSON queryJson = QBCallout.queryPayments(query);
         List<qime__Payment__c> payments = QBMap.mapPayments(queryJson);
         Database.update(payments, false);

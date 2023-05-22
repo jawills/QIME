@@ -1,16 +1,16 @@
-public class QBInvoiceQueueable implements Queueable, Database.AllowsCallouts{
+global class QBInvoiceQueueable implements Queueable, Database.AllowsCallouts{
     Integer currentCount;
     Integer totalCount;
     Integer iteratorSize;
     Integer stackDepth;
-    public QBInvoiceQueueable(Integer currentCount, Integer totalCount, Integer iteratorSize, Integer stackDepth) {
+    global QBInvoiceQueueable(Integer currentCount, Integer totalCount, Integer iteratorSize, Integer stackDepth) {
         this.currentCount = currentCount;
         this.totalCount = totalCount;
         this.iteratorSize = iteratorSize;
         this.stackDepth = stackDepth;
     }
 
-    public void execute(QueueableContext context) {
+    global void execute(QueueableContext context) {
         if(totalCount == 0){
             totalCount = QBMap.getCount(QBCallout.getInvoiceCount());
         }

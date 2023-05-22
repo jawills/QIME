@@ -145,7 +145,7 @@ public class QBMap {
                 QBInvoiceJSON.Line line = new QBInvoiceJSON.Line();
                 //map line item fields
                 
-                line.Amount = ili.qime__Unit_Price__c * ili.qime__Quantity__c;
+                line.Amount = ili.qime__Amount__c;
                 line.Description = ili.Product__r.qime__QB_Description__c;
     
                 //@todo unhardcode this
@@ -154,7 +154,7 @@ public class QBMap {
     
                 QBInvoiceJSON.ItemRef itemRef = new QBInvoiceJSON.ItemRef();
     
-                itemRef.value = ili.qime__qb_Id__c; 
+                itemRef.value = ili.qime__Product__r.qime__QB_Id__c; 
                 detail.ItemRef = itemRef;
                 detail.Qty = ili.qime__Quantity__c;
                 detail.UnitPrice = ili.qime__Unit_Price__c;
@@ -247,6 +247,8 @@ public class QBMap {
         inv.QB_ID__c = json.Invoice.Id;
         inv.QB_SyncToken__c = json.Invoice.SyncToken;
         inv.balance_Due__c = json.Invoice.Balance;
+
+        inv.name = 'INV-' + json.Invoice.DocNumber;
 
         for(QBInvoiceResponseJSON.Line ili : json.Invoice.Line){
             if(String.isNotBlank(ili?.SalesItemLineDetail?.ItemRef?.value)){

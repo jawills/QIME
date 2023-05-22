@@ -129,8 +129,9 @@
 
     private static List<qime__Invoice_Line_Item__c> getILIs(Id invId){
         return [SELECT Id, qime__Invoice__c, qime__Unit_Price__c,
-                     qime__Quantity__c, qime__Product__c, 
-                     qime__Product__r.qime__QB_Id__c, qime__QB_Id__c, 
+                     qime__Quantity__c, qime__Product__c, qime__Amount__c,
+                     qime__Product__r.qime__QB_Id__c, qime__Product__r.qime__QB_Description__c,
+                     qime__QB_Id__c, 
                      qime__Taxable__c
                 FROM qime__Invoice_Line_Item__c 
                 WHERE qime__Invoice__c =: invId];
