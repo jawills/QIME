@@ -16,6 +16,7 @@
 // and so can only be parsed with explicitly generated code, this option
 // was auto selected for you.
 
+@SuppressWarnings('PMD.PropertyNamingConventions, PMD.VariableNamingConventions, PMD.FieldNamingConventions')
 public class QBInvoiceResponseJSON {
 
 	public class Line {
@@ -267,8 +268,6 @@ public class QBInvoiceResponseJSON {
 				if (parser.nextToken() != System.JSONToken.VALUE_NULL) {
 					if (text == 'Invoice') {
 						Invoice = new Invoice(parser);
-					} else if (text == 'time') {
-						//1time = parser.getText();
 					} else {
 						System.debug(LoggingLevel.WARN, 'QBInvoiceResponseJSON consuming unrecognized property: '+text);
 						consumeObject(parser);

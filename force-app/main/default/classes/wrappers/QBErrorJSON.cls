@@ -1,3 +1,4 @@
+@SuppressWarnings('PMD.PropertyNamingConventions, PMD.VariableNamingConventions, PMD.FieldNamingConventions')
 public class QBErrorJSON {
 
 	public Fault Fault {get;set;} 

@@ -1,15 +1,27 @@
 public class InvoiceTriggerHandler {
 
+    /**
+     * Before Update Trigger Handler
+     * @param invoices Invoices from Trigger.new
+     */
     public static void beforeUpdateHandler(List<qime__Invoice__c> invoices){
         linkAccounts(invoices);
         linkOpportunities(invoices);
     }
 
+    /**
+     * Before Insert Trigger Handler
+     * @param invoices Invoices from Trigger.new
+     */
     public static void beforeInsertHandler(List<qime__Invoice__c> invoices){
         linkAccounts(invoices);
         linkOpportunities(invoices);
     }
 
+    /**
+     * Link invoices to accounts based on customer id in QBO
+     * @param invoices Invoices from Trigger.new
+     */
     private static void linkAccounts(List<qime__Invoice__c> invoices){
         Set<String> customerIdSet = new Set<String>();
         Map<String, Id> accountMap = new Map<String, Id>();
@@ -34,6 +46,10 @@ public class InvoiceTriggerHandler {
         }
     }
 
+    /**
+     * Link invoices to opportunities based on memo
+     * @param invoices Invoices from Trigger.new
+     */
     private static void linkOpportunities(List<qime__Invoice__c> invoices){
         qime__QIME_Config__mdt config;
         if(!Test.isRunningTest()){
@@ -71,7 +87,7 @@ public class InvoiceTriggerHandler {
         }
     }
 
-        /**
+    /**
      * Test a String to see if it is a valid SFDC  ID
      * @param  sfdcId The ID to test.
      * @param  t      The Type of the sObject to compare against
@@ -94,7 +110,7 @@ public class InvoiceTriggerHandler {
                 return true;
             }
         } catch ( Exception e ){
-            // StringException, TypeException
+            System.debug(e);
         }
  
         // ID is not valid

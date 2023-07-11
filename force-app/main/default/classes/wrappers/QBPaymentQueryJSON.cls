@@ -5,6 +5,7 @@
 // and so can only be parsed with explicitly generated code, this option
 // was auto selected for you.
 
+@SuppressWarnings('PMD.PropertyNamingConventions, PMD.VariableNamingConventions, PMD.FieldNamingConventions')
 public class QBPaymentQueryJSON {
 
 	public class Line {

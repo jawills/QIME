@@ -273,10 +273,20 @@ public class QBMap {
         public qime__Invoice__c inv{get;set;}
     }
 
-    public static Integer getCount(QBQueryResponseCountJSON count){
-        return count.QueryResponse.totalCount;
+    /**
+     * Get the count from the query response 
+     * @param countJSON The response data from a count(*) query
+     * @return The count in QB for the given object
+     */
+    public static Integer getCount(QBQueryResponseCountJSON countJSON){
+        return countJSON.QueryResponse.totalCount;
     }
 
+    /**
+     * Map invoice query data into invoices, payments, and invoice line item
+     * @param invQuery The response data from invoice query
+     * @return List of qime__Invoice__c, qime__Payment__c, qime__Invoice_Payment__c, and qime__Invoice_Line_Item__c
+     */
     public static List<SObject> mapInvoices(QBInvoiceQueryJSON invQuery){
         List<qime__Payment__c> payments = new List<qime__Payment__c>();
         List<qime__Invoice_Payment__c> inv_payments = new List<qime__Invoice_Payment__c>();

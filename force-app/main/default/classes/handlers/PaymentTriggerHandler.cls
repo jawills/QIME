@@ -1,13 +1,25 @@
 public class PaymentTriggerHandler {
 
+    /**
+     * Before Update Trigger Handler
+     * @param payments Payments from Trigger.new
+     */
     public static void beforeUpdateHandler(List<qime__Payment__c> payments){
         linkAccounts(payments);
     }
 
+    /**
+     * Before Insert Trigger Handler
+     * @param payments Payments from Trigger.new
+     */
     public static void beforeInsertHandler(List<qime__Payment__c> payments){
         linkAccounts(payments);
     }
 
+    /**
+     * Link payments to accounts based on customer id
+     * @param payments Payments from Trigger.new
+     */
     private static void linkAccounts(List<qime__Payment__c> payments){
         Set<String> customerIdSet = new Set<String>();
         Map<String, Id> accountMap = new Map<String, Id>();

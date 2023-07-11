@@ -26,8 +26,10 @@ public class QBAuthProviderTest {
         private static final String API_USER_URL = 
         'https://appcenter.intuit.com/user/api'; 
     
-    // In the real world scenario, the key and value would be read 
-    // from the (custom fields in) custom metadata type record. 
+    /**
+     * Setup test data for Named credential parameters
+     * @return Map of custom metadata values
+     */
     private static Map<String,String> setupAuthProviderConfig () 
     { 
         Map<String,String> authProviderConfiguration = new Map<String,String>(); 
@@ -44,7 +46,7 @@ public class QBAuthProviderTest {
     
     } 
     
-    static testMethod void testInitiateMethod() 
+    @isTest static void testInitiateMethod() 
     { 
         String stateToPropogate = 'mocktestState'; 
         Map<String,String> authProviderConfiguration = setupAuthProviderConfig(); 
@@ -58,7 +60,7 @@ public class QBAuthProviderTest {
         System.assertEquals(expectedUrl.getUrl(), actualUrl.getUrl());
     } 
     
-    static testMethod void testHandleCallback() 
+    @isTest static void testHandleCallback() 
     { 
         Map<String,String> authProviderConfiguration = 
         setupAuthProviderConfig(); 
@@ -91,7 +93,7 @@ public class QBAuthProviderTest {
 
     } 
         
-    static testMethod void testGetUserInfo() 
+    @isTest static void testGetUserInfo() 
     { 
         Map<String,String> authProviderConfiguration = 
         setupAuthProviderConfig(); 
@@ -134,7 +136,9 @@ public class QBAuthProviderTest {
     } 
     
     
-    // Implement a mock http response generator for QBAuth. 
+    /**
+     * Implement a mock http response generator for QBAuth.
+     */ 
     public class QBAuthMockHttpResponseGenerator implements HttpCalloutMock 
     { 
         public HTTPResponse respond(HTTPRequest req) 

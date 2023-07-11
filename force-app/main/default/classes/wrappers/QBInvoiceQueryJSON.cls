@@ -16,6 +16,7 @@
 // and so can only be parsed with explicitly generated code, this option
 // was auto selected for you.
 
+@SuppressWarnings('PMD.PropertyNamingConventions, PMD.VariableNamingConventions, PMD.FieldNamingConventions')
 public class QBInvoiceQueryJSON {
 
 	public class CurrencyRef {
@@ -454,8 +455,6 @@ public class QBInvoiceQueryJSON {
 				if (parser.nextToken() != System.JSONToken.VALUE_NULL) {
 					if (text == 'QueryResponse') {
 						QueryResponse = new QueryResponse(parser);
-					} else if (text == 'time') {
-						//time = parser.getText();
 					} else {
 						System.debug(LoggingLevel.WARN, 'QBInvoiceQueryJSON consuming unrecognized property: '+text);
 						consumeObject(parser);

@@ -1,12 +1,25 @@
 public class InvoiceLineItemTriggerHandler {
+    
+    /**
+     * Before Update Trigger Handler
+     * @param ilis Invoice Line Items from Trigger.new
+     */
     public static void beforeUpdateHandler(List<qime__Invoice_Line_Item__c> ilis){
         linkProducts(ilis);
     }
 
+    /**
+     * Before Insert Trigger Handler
+     * @param ilis Invoice Line Items from Trigger.new
+     */
     public static void beforeInsertHandler(List<qime__Invoice_Line_Item__c> ilis){
         linkProducts(ilis);
     }
 
+    /**
+     * Link invoice line items to products based on product id in QBO
+     * @param ilis Invoice Line Items from Trigger.new
+     */
     private static void linkProducts(List<qime__Invoice_Line_Item__c> ilis){
         Set<String> productQBIds = new Set<String>();
         for(qime__Invoice_Line_Item__c ili : ilis){
@@ -22,11 +35,10 @@ public class InvoiceLineItemTriggerHandler {
         for(Product2 p : products){
             productMap.put(p.qime__QB_Id__c, p.Id);
         }
-
         for(qime__Invoice_Line_Item__c ili : ilis){
             if(String.isNotBlank(ili.qime__ItemRef_Id__c) && productMap.containsKey(ili.qime__ItemRef_Id__c)){
                 ili.qime__Product__c = productMap.get(ili.qime__ItemRef_Id__c);
             }
-        }
+        }  
     }
 }
