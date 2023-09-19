@@ -5,7 +5,7 @@ public with sharing class SetupHelper {
     private static final String AUTH_PROVIDER_LABEL = 'QB Auth Provider';
     private static final String PROVIDER_TYPE = 'qime__QBAuthProvider';
     private static final String PLUGIN = 'qime__QBAuthProvider';
-    private static final String NAMED_CREDENTIAL_NAME = 'QB_External_Credential';
+    private static final String NAMED_CREDENTIAL_NAME = 'QB_Named_Credential';
     private static final String CUSTOM_METADATA_NAME = 'qime__QB_Credential__mdt.QB_Auth_Provider';
     private static final String TOKEN_URL = 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer';
     private static final String SCOPE = 'com.intuit.quickbooks.accounting';

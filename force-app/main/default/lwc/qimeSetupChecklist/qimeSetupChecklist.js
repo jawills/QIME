@@ -19,7 +19,6 @@ export default class QimeSetupChecklist extends LightningElement {
         }else{
             label = label + this.x;
         }
-        console.log(label);
         return label;
     }
 
