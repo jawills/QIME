@@ -1,0 +1,38 @@
+<template>
+    <div class="slds-page-header">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name="standard:home" size="medium"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1>
+                                    <span class="slds-page-header__title slds-p-top_xx-small" data-id="header-title" title={title}>{title}</span>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-page-header__col-actions">
+                <div class="slds-page-header__controls">
+                    <div class="slds-page-header__control">
+                        <lightning-button-group>
+                            <template if:true={showReleaseNotesButton}>
+                                <lightning-button
+                                    data-id="release-notes-button"
+                                    icon-name="utility:announcement"
+                                    label={releaseNotesButtonLabel}
+                                    onclick={handleViewReleaseNotes}
+                                ></lightning-button>
+                            </template>
+                        </lightning-button-group>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

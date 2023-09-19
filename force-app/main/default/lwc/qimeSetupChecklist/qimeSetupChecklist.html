@@ -1,0 +1,20 @@
+<template>
+    <!---Accordion-->
+    <lightning-card title="Accordion with An Active Section">
+        <lightning-accordion active-section-name="A">
+            <lightning-accordion-section name="A" label={authProviderLabel}>
+                Get the authentication started with the Auth. Provider.
+            </lightning-accordion-section>
+            <lightning-accordion-section name="B" label={externalCredetnialLabel}>
+                Setup the authentication with the external credential
+            </lightning-accordion-section>
+            <lightning-accordion-section name="C" label={namedCredentialLabel}>
+                Create the connection to your Quickbooks instance
+            </lightning-accordion-section>
+            <lightning-accordion-section name="D" label={authorizeQBOLabel}>
+                Authorize with your Quickbooks
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </lightning-card>
+    <!---/Accordion-->
+</template>

@@ -1,0 +1,11 @@
+<template>
+    <lightning-card class="slds-size_1-of-6 slds-p-right_x-small">
+        <h3 slot="title" style="text-align: center;">{title}</h3>
+        <p class="slds-card__body_inner slds-text-color_success slds-text-align_center slds-text-heading_large"  >{body}</p>
+        <p class="slds-card__body_inner" if:true={loading} >
+            <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+        </p>
+
+        <lightning-button if:true={link} label="Open" slot="footer" onclick={handleClick}></lightning-button>
+    </lightning-card>
+</template>

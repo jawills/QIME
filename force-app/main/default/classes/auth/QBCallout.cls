@@ -12,11 +12,11 @@ public class QBCallout {
      */
 
     private static HttpResponse calloutHelper(String endpoint, String method, String body){
-        QIME__QB_Credential__mdt credentials;
+        QB_Credential__mdt credentials;
         if(Test.isRunningTest()){
             credentials = QBTestHelper.getCredential();
         }else{
-            List<QIME__QB_Credential__mdt> creds = [SELECT Id, Realm_Id__c, MinorVersion__c FROM QIME__QB_Credential__mdt WHERE DeveloperName = 'QB_Auth_Provider'];
+            List<QB_Credential__mdt> creds = [SELECT Id, Realm_Id__c, MinorVersion__c FROM QB_Credential__mdt WHERE DeveloperName = 'QB_Auth_Provider'];
             if(creds.size() > 0){
                 credentials = creds[0];
             }else{
@@ -77,7 +77,7 @@ public class QBCallout {
      * @return The wrapped json response from the QB callout
      */
     public static QBCustomerJSON getCustomer(Account a){
-        String query = 'select * from customer where id = \'' + a.QIME__QB_Id__c + '\'';
+        String query = 'select * from customer where id = \'' + a.QB_Id__c + '\'';
         HttpResponse res = calloutHelper('query', 'POST', query);
         return QBCustomerJSON.parse(res.getBody());
     }
@@ -98,7 +98,7 @@ public class QBCallout {
      * @return The wrapped json response from the QB callout
      */
     public static QBInvoiceQueryJSON getInvoice(Invoice__c inv){
-        String query = 'select * from invoice where id = \'' + inv.QIME__QB_Id__c + '\'';
+        String query = 'select * from invoice where id = \'' + inv.QB_Id__c + '\'';
         HttpResponse res = calloutHelper('query', 'POST', query);
         return QBInvoiceQueryJSON.parse(res.getBody());
     }
@@ -109,6 +109,24 @@ public class QBCallout {
      */
     public static QBQueryResponseCountJSON getInvoiceCount(){
         HttpResponse res = calloutHelper('query', 'POST', 'select count(*) from Invoice');
+        return QBQueryResponseCountJSON.parse(res.getBody());
+    }
+
+    /**
+     * Get Customer count from QBO
+     * @return The wrapped json response from the QB callout
+     */
+    public static QBQueryResponseCountJSON getCustomerCount(){
+        HttpResponse res = calloutHelper('query', 'POST', 'select count(*) from Customer');
+        return QBQueryResponseCountJSON.parse(res.getBody());
+    }
+
+    /**
+     * Get Payment count from QBO
+     * @return The wrapped json response from the QB callout
+     */
+    public static QBQueryResponseCountJSON getPaymentCount(){
+        HttpResponse res = calloutHelper('query', 'POST', 'select count(*) from Payment');
         return QBQueryResponseCountJSON.parse(res.getBody());
     }
 
@@ -138,7 +156,7 @@ public class QBCallout {
      * @return The wrapped json response from the QB callout
      */
     public static QBPaymentQueryJSON getPayment(Payment__c pmt){
-        String query = 'select * from payment where id = \'' + pmt.QIME__QB_Id__c + '\'';
+        String query = 'select * from payment where id = \'' + pmt.QB_Id__c + '\'';
         HttpResponse res = calloutHelper('query', 'POST', query);
         return QBPaymentQueryJSON.parse(res.getBody());
     }
@@ -151,16 +169,6 @@ public class QBCallout {
     public static QBPaymentQueryJSON queryPayments(String query){
         HttpResponse res = calloutHelper('query', 'POST', query);
         return QBPaymentQueryJSON.parse(res.getBody());
-    }
-
-    /**
-     * Query payments from QBO
-     * @param query SQL format query
-     * @return The wrapped json response from the QB callout
-     */
-    public static QBQueryResponseCountJSON getPaymentCount(){
-        HttpResponse res = calloutHelper('query', 'POST', 'select count(*) from Payment');
-        return QBQueryResponseCountJSON.parse(res.getBody());
     }
 
     /**

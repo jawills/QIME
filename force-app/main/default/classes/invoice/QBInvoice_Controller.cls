@@ -1,7 +1,7 @@
 public with sharing class QBInvoice_Controller {
 
     public Id invId{get;set;}
-    public qime__Invoice__c inv {get;set;}
+    public Invoice__c inv {get;set;}
 
     /**
      * Initialize controller

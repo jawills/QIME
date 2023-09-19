@@ -4,7 +4,7 @@
     static void makeData(){
         Account a = new Account();
         a.Name = 'Jizuke';
-        a.qime__QB_Id__c = 'Test';
+        a.QB_Id__c = 'Test';
         insert a;
 
         Contact c = new Contact();
@@ -12,9 +12,9 @@
         c.AccountId = a.Id;
         insert c;
         
-        qime__Payment__c pmt = new qime__Payment__c();
+        Payment__c pmt = new Payment__c();
         pmt.Name = 'PMT-XXXX';
-        pmt.qime__QB_Id__c = 'test-pmt';
+        pmt.QB_Id__c = 'test-pmt';
         insert pmt;
 
     }
@@ -22,7 +22,7 @@
     @isTest static void testController(){
         Test.setMock(HttpCalloutMock.class, new QBMock());
 
-        qime__Payment__c inv = QBPaymentHelper.getPayment([SELECT Id FROM qime__Payment__c WHERE Name = 'PMT-XXXX'].Id);
+        Payment__c inv = QBPaymentHelper.getPayment([SELECT Id FROM Payment__c WHERE Name = 'PMT-XXXX'].Id);
 
         Test.startTest();
 
@@ -40,7 +40,7 @@
 
     @isTest static void testPaymentQuery(){
         Test.setMock(HttpCalloutMock.class, new QBMock());
-        qime__Payment__c pmt = QBPaymentHelper.getPayment([SELECT Id FROM qime__Payment__c WHERE Name = 'PMT-XXXX'].Id);
+        Payment__c pmt = QBPaymentHelper.getPayment([SELECT Id FROM Payment__c WHERE Name = 'PMT-XXXX'].Id);
         Test.startTest();
         QBPaymentQueryJSON Payment = QBCallout.getPayment(pmt);
         Test.stopTest();

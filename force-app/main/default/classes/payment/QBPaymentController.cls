@@ -1,7 +1,7 @@
 public with sharing class QBPaymentController {
 
     public Id pmtId {get;set;}
-    public qime__Payment__c pmt {get;set;}
+    public Payment__c pmt {get;set;}
 
     public QBPaymentController(ApexPages.StandardController controller) {
         pmtId = controller.getRecord().Id;
@@ -14,7 +14,7 @@ public with sharing class QBPaymentController {
         }
 
         QBPaymentQueryJSON queryJson = QBCallout.getPayment(pmt);
-        List<qime__Payment__c> payments = QBMap.mapPayments(queryJson);
+        List<Payment__c> payments = QBMap.mapPayments(queryJson);
         Database.update(payments, false);
 
         return new PageReference('/'+ pmtId);

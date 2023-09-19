@@ -4,44 +4,46 @@ public class InvoiceTriggerHandler {
      * Before Update Trigger Handler
      * @param invoices Invoices from Trigger.new
      */
-    public static void beforeUpdateHandler(List<qime__Invoice__c> invoices){
+    public static void beforeUpdateHandler(List<Invoice__c> invoices){
         linkAccounts(invoices);
         linkOpportunities(invoices);
+        setPaymentDate(invoices);
     }
 
     /**
      * Before Insert Trigger Handler
      * @param invoices Invoices from Trigger.new
      */
-    public static void beforeInsertHandler(List<qime__Invoice__c> invoices){
+    public static void beforeInsertHandler(List<Invoice__c> invoices){
         linkAccounts(invoices);
         linkOpportunities(invoices);
+        setPaymentDate(invoices);
     }
 
     /**
      * Link invoices to accounts based on customer id in QBO
      * @param invoices Invoices from Trigger.new
      */
-    private static void linkAccounts(List<qime__Invoice__c> invoices){
+    private static void linkAccounts(List<Invoice__c> invoices){
         Set<String> customerIdSet = new Set<String>();
         Map<String, Id> accountMap = new Map<String, Id>();
-        for(qime__Invoice__c invoice : invoices){
-            if(String.isNotBlank(invoice.qime__Customer_Id__c)){
-                customerIdSet.add(invoice.qime__Customer_Id__c);
+        for(Invoice__c invoice : invoices){
+            if(String.isNotBlank(invoice.Customer_Id__c)){
+                customerIdSet.add(invoice.Customer_Id__c);
             }
         }
         
-        List<Account> accounts = [SELECT Id, qime__QB_Id__c
+        List<Account> accounts = [SELECT Id, QB_Id__c
                                     FROM Account 
-                                    WHERE qime__QB_Id__c in: new List<String>(customerIdSet)];
+                                    WHERE QB_Id__c in: new List<String>(customerIdSet)];
         for(Account a : accounts){
-            accountMap.put(a.qime__QB_Id__c, a.Id);
+            accountMap.put(a.QB_Id__c, a.Id);
         }
 
-        for(qime__Invoice__c invoice : invoices){
-            if(String.isNotBlank(invoice?.qime__Customer_Id__c) 
-                && accountMap.containsKey(invoice.qime__Customer_Id__c)){
-                    invoice.qime__Account__c = accountMap.get(invoice.qime__Customer_Id__c);
+        for(Invoice__c invoice : invoices){
+            if(String.isNotBlank(invoice?.Customer_Id__c) 
+                && accountMap.containsKey(invoice.Customer_Id__c)){
+                    invoice.Account__c = accountMap.get(invoice.Customer_Id__c);
                 }
         }
     }
@@ -50,23 +52,23 @@ public class InvoiceTriggerHandler {
      * Link invoices to opportunities based on memo
      * @param invoices Invoices from Trigger.new
      */
-    private static void linkOpportunities(List<qime__Invoice__c> invoices){
-        qime__QIME_Config__mdt config;
+    private static void linkOpportunities(List<Invoice__c> invoices){
+        QIME_Config__mdt config;
         if(!Test.isRunningTest()){
-            config = [SELECT Id, qime__Link_By_Memo__c 
-                        FROM qime__QIME_Config__mdt 
+            config = [SELECT Id, Link_By_Memo__c 
+                        FROM QIME_Config__mdt 
                         WHERE Label = 'Default'];
         }else{
             config = QBTestHelper.getConfig();
         }
         
-        if(!config.qime__Link_By_Memo__c){
+        if(!config.Link_By_Memo__c){
             return;
         }
         Set<Id> oppIds = new Set<Id>();
-        for(qime__Invoice__c inv : invoices){
-            if(String.isNotBlank(inv.qime__Memo__c) && isValidSalesforceId(inv.qime__Memo__c, Opportunity.class)){
-                oppIds.add((Id) inv.qime__Memo__c);
+        for(Invoice__c inv : invoices){
+            if(String.isNotBlank(inv.Memo__c) && isValidSalesforceId(inv.Memo__c, Opportunity.class)){
+                oppIds.add((Id) inv.Memo__c);
             }
         }
 
@@ -78,11 +80,19 @@ public class InvoiceTriggerHandler {
             opportunityIds.add(o.Id);
         }
 
-        for(qime__Invoice__c inv : invoices){
-            if(String.isNotBlank(inv.qime__Memo__c) 
-                && inv.qime__Memo__c instanceof Id
-                && opportunityIds.contains(inv.qime__Memo__c)){
-                inv.qime__Opportunity__c = (Id) inv.qime__Memo__c;
+        for(Invoice__c inv : invoices){
+            if(String.isNotBlank(inv.Memo__c) 
+                && inv.Memo__c instanceof Id
+                && opportunityIds.contains(inv.Memo__c)){
+                inv.Opportunity__c = (Id) inv.Memo__c;
+            }
+        }
+    }
+
+    private static void setPaymentDate(List<Invoice__c> invoices){
+        for(Invoice__c inv : invoices){
+            if(inv.Payment_Date__c == null && inv.Balance__c == 0.0 && inv.Total__c > 0){
+                inv.Payment_Date__c = Date.today();
             }
         }
     }

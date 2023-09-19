@@ -10,12 +10,12 @@ public class QBMap {
 
         //Map given account fields
         customer.CompanyName = acc.Name;
-        customer.Taxable = acc.qime__Taxable__c;
-        if(!acc.qime__Taxable__c){
-            customer.TaxExemptionReasonId = acc.qime__Tax_Exemption_Reason__c;
+        customer.Taxable = acc.Taxable__c;
+        if(!acc.Taxable__c){
+            customer.TaxExemptionReasonId = acc.Tax_Exemption_Reason__c;
             customer.ResaleNum = 'Resale';
         }        
-        customer.SyncToken = acc.qime__QB_SyncToken__c;
+        customer.SyncToken = acc.QB_SyncToken__c;
         customer.sparse = True;
 
         //Create Shipping address
@@ -35,7 +35,7 @@ public class QBMap {
         //customer.PrimaryEmailAddr = acc.Email; //does not have correct mapping
         customer.Job = False;
         customer.IsProject = False;
-        customer.Id = acc.qime__QB_ID__c;
+        customer.Id = acc.QB_ID__c;
         customer.DisplayName = acc.Name;
 
         //Create Billing Address
@@ -59,24 +59,24 @@ public class QBMap {
      * @param inv The invoice that is used for the mapping
      * @return The json String that is used for the body of the request callout 
      */
-    public static String mapInvoice(Invoice__c inv, List<qime__Invoice_Line_Item__c> ilis, String customerId){
+    public static String mapInvoice(Invoice__c inv, List<Invoice_Line_Item__c> ilis, String customerId){
         //Initialize invoice object
         QBInvoiceJSON invoiceObj = new QBInvoiceJSON();
-        qime__QIME_Config__mdt config = [SELECT Id, qime__Use_Line_Item__c, qime__QB_Product_Id__c 
-                                            FROM qime__QIME_Config__mdt 
+        QIME_Config__mdt config = [SELECT Id, Use_Line_Item__c, QB_Product_Id__c 
+                                            FROM QIME_Config__mdt 
                                             WHERE Label = 'Default'];
 
-        invoiceObj.Id = inv.qime__QB_Id__c;
-        invoiceObj.SyncToken = inv.qime__QB_SyncToken__c;
-        invoiceObj.DueDate = inv.qime__Due_Date__c;
-        invoiceObj.AllowOnlineACHPayment = inv.qime__Allow_Online_ACH_Payment__c;
-        invoiceObj.AllowOnlineCreditCardPayment = inv.qime__Allow_Online_CC_Payment__c;
+        invoiceObj.Id = inv.QB_Id__c;
+        invoiceObj.SyncToken = inv.QB_SyncToken__c;
+        invoiceObj.DueDate = inv.Due_Date__c;
+        invoiceObj.AllowOnlineACHPayment = inv.Allow_Online_ACH_Payment__c;
+        invoiceObj.AllowOnlineCreditCardPayment = inv.Allow_Online_CC_Payment__c;
         invoiceObj.AutoDocNumber = True;
         invoiceObj.TxnTaxDetail = new QBInvoiceJSON.TxnTaxDetail();
         // // @todo unhardcode
         // invoiceObj.TxnTaxDetail.TxnTaxCodeRef = new QBInvoiceJSON.TxnTaxCodeRef();
         // invoiceObj.TxnTaxDetail.TxnTaxCodeRef.value = '17';
-        invoiceObj.TxnTaxDetail.TotalTax = inv.qime__tax__c;
+        invoiceObj.TxnTaxDetail.TotalTax = inv.tax__c;
         if(String.isNotBlank(inv.name) && !inv.name.contains('X')){
             String invNumber = inv.name.replace('INV-', '');
             invoiceObj.DocNumber  = invNumber;
@@ -96,26 +96,26 @@ public class QBMap {
         // invoiceObj.CustomerMemo = memoRef;
         //map billing terms @todo map this based on terms
         QBInvoiceJSON.SalesTermRef sales = new QBInvoiceJSON.SalesTermRef();
-        sales.value = mapTerms(inv.qime__Terms__c);
+        sales.value = mapTerms(inv.Terms__c);
         invoiceObj.SalesTermRef = sales;
         
         //Create Billing Address
         QBInvoiceJSON.BillAddr billAddy = new QBInvoiceJSON.BillAddr();
-        billAddy.City = inv.qime__Bill_City__c;
-        billAddy.Line1 = inv.qime__Bill_Street__c + ' ' + inv.qime__Bill_Suite__c;
-        billAddy.CountrySubDivisionCode = inv.qime__Bill_State__c;
-        billAddy.PostalCode = inv.qime__Bill_Zip__c;
-        billAddy.Country = inv.qime__Bill_Country__c;
+        billAddy.City = inv.Bill_City__c;
+        billAddy.Line1 = inv.Bill_Street__c + ' ' + inv.Bill_Suite__c;
+        billAddy.CountrySubDivisionCode = inv.Bill_State__c;
+        billAddy.PostalCode = inv.Bill_Zip__c;
+        billAddy.Country = inv.Bill_Country__c;
         invoiceObj.BillAddr = billAddy;
 
         //Create Shipping Address
         QBInvoiceJSON.BillAddr shipAddy = new QBInvoiceJSON.BillAddr();
 
-        shipAddy.City = inv.qime__Ship_City__c;
-        shipAddy.Line1 = inv.qime__Ship_Street__c + ' ' + inv.qime__Ship_Suite__c;
-        shipAddy.PostalCode = inv.qime__Ship_Zip__c;
-        shipAddy.CountrySubDivisionCode = inv.qime__Ship_State__c;
-        shipAddy.Country = inv.qime__Ship_Country__c;
+        shipAddy.City = inv.Ship_City__c;
+        shipAddy.Line1 = inv.Ship_Street__c + ' ' + inv.Ship_Suite__c;
+        shipAddy.PostalCode = inv.Ship_Zip__c;
+        shipAddy.CountrySubDivisionCode = inv.Ship_State__c;
+        shipAddy.Country = inv.Ship_Country__c;
 
         invoiceObj.ShipAddr = shipAddy;
 
@@ -124,7 +124,7 @@ public class QBMap {
 
         //Initialize line items for invoice mapping
         invoiceObj.Line = new List<QBInvoiceJSON.Line>();
-        if(config.qime__Use_Line_Item__c){
+        if(config.Use_Line_Item__c){
             QBInvoiceJSON.Line line = new QBInvoiceJSON.Line();
             line.Amount = inv.Subtotal__c;
             //@todo unhardcode this
@@ -133,7 +133,7 @@ public class QBMap {
 
             QBInvoiceJSON.ItemRef itemRef = new QBInvoiceJSON.ItemRef();
 
-            itemRef.value = config.qime__QB_Product_Id__c; 
+            itemRef.value = config.QB_Product_Id__c; 
             detail.Qty = 1.0;
             detail.TaxCodeRef = new QBInvoiceJSON.ItemRef();
             detail.TaxCodeRef.value = 'TAX';
@@ -145,8 +145,8 @@ public class QBMap {
                 QBInvoiceJSON.Line line = new QBInvoiceJSON.Line();
                 //map line item fields
                 
-                line.Amount = ili.qime__Amount__c;
-                line.Description = ili.Product__r.qime__QB_Description__c;
+                line.Amount = ili.Amount__c;
+                line.Description = ili.Product__r.QB_Description__c;
     
                 //@todo unhardcode this
                 line.DetailType = 'SalesItemLineDetail';
@@ -154,13 +154,13 @@ public class QBMap {
     
                 QBInvoiceJSON.ItemRef itemRef = new QBInvoiceJSON.ItemRef();
     
-                itemRef.value = ili.qime__Product__r.qime__QB_Id__c; 
+                itemRef.value = ili.Product__r.QB_Id__c; 
                 detail.ItemRef = itemRef;
-                detail.Qty = ili.qime__Quantity__c;
-                detail.UnitPrice = ili.qime__Unit_Price__c;
+                detail.Qty = ili.Quantity__c;
+                detail.UnitPrice = ili.Unit_Price__c;
                 detail.TaxCodeRef = new QBInvoiceJSON.ItemRef();
                 detail.TaxCodeRef.value = 'TAX';
-                if(ili.qime__taxable__c){
+                if(ili.taxable__c){
                     detail.TaxCodeRef.value = 'NON';
                 }
                 line.SalesItemLineDetail = detail;
@@ -171,8 +171,8 @@ public class QBMap {
 
         //Map Shipping fields
         QBInvoiceJSON.Line shippingLine = new QBInvoiceJSON.Line();
-        shippingLine.Amount = inv.qime__Shipping_Handling__c;
-        if(inv.qime__Shipping_Handling__c == null){
+        shippingLine.Amount = inv.Shipping_Handling__c;
+        if(inv.Shipping_Handling__c == null){
             shippingLine.Amount = 0;
         }
         shippingLine.DetailType = 'SalesItemLineDetail';
@@ -188,13 +188,13 @@ public class QBMap {
         if(String.isBlank(term)){
             return null;
         }
-        List<qime__QB_Terms__c> terms = [SELECT Id, qime__QB_ID__c
-                                            FROM qime__QB_Terms__c 
+        List<QB_Terms__c> terms = [SELECT Id, QB_ID__c
+                                            FROM QB_Terms__c 
                                             WHERE Name =: term];
         if(terms.size() == 0){
             throw new QBException('Please map the term id for ' + term );
         }
-        return terms[0].qime__QB_ID__c;
+        return terms[0].QB_ID__c;
     }
 
     /**
@@ -204,24 +204,24 @@ public class QBMap {
      * @return The the invoice that can be crud to salesforce
      */
     public static invoiceReturn mapInvoiceData(Invoice__c inv, QBInvoiceQueryJSON json){
-        List<qime__Payment__c> payments = new List<qime__Payment__c>();
-        List<qime__Invoice_Payment__c> inv_payments = new List<qime__Invoice_Payment__c>();
+        List<Payment__c> payments = new List<Payment__c>();
+        List<Invoice_Payment__c> inv_payments = new List<Invoice_Payment__c>();
 
         if(json.QueryResponse.Invoice.size() > 0){
             inv.balance_Due__c = json.QueryResponse.Invoice[0].Balance;
             for(QBInvoiceQueryJSON.Invoice invoice : json.QueryResponse.Invoice){
                 for(QBInvoiceQueryJSON.LinkedTxn txn : invoice.LinkedTxn){
-                    qime__Payment__c p = new qime__Payment__c();
+                    Payment__c p = new Payment__c();
                     p.qb_id__c = txn.TxnId;
                     payments.add(p);
 
-                    qime__Invoice_Payment__c inv_payment = new qime__Invoice_Payment__c();
-                    inv_payment.qime__Payment__r = new qime__Payment__c(qb_id__c = txn.TxnId);
-                    inv_payment.qime__Invoice__r = new qime__Invoice__c(qb_Id__c = invoice.Id);
-                    inv_payment.qime__QB_Invoice_Id__c = invoice.Id;
-                    inv_payment.qime__QB_Payment_Id__c = txn.TxnId;
+                    Invoice_Payment__c inv_payment = new Invoice_Payment__c();
+                    inv_payment.Payment__r = new Payment__c(qb_id__c = txn.TxnId);
+                    inv_payment.Invoice__r = new Invoice__c(qb_Id__c = invoice.Id);
+                    inv_payment.QB_Invoice_Id__c = invoice.Id;
+                    inv_payment.QB_Payment_Id__c = txn.TxnId;
                     // Linked transactions have a unique id of inv id + payment id
-                    inv_payment.qime__qb_Id__c = invoice.Id + txn.TxnId;
+                    inv_payment.qb_Id__c = invoice.Id + '-' + txn.TxnId;
                     inv_payments.add(inv_payment);
                 }
 
@@ -240,7 +240,7 @@ public class QBMap {
      * @param json Query json from QBO
      * @return The the invoice that can be crud to salesforce
      */
-    public static List<SObject> mapInvoiceData(Invoice__c inv, List<qime__Invoice_Line_Item__c> ilis, QBInvoiceResponseJSON json){
+    public static List<SObject> mapInvoiceData(Invoice__c inv, List<Invoice_Line_Item__c> ilis, QBInvoiceResponseJSON json){
         List<SObject> returnList = new List<SObject>();
         // Key: QB Product Id, Value: Line Item Id
         Map<String,String> lineItemMap = new Map<String,String>();
@@ -256,9 +256,9 @@ public class QBMap {
             }
         }
 
-        for(qime__Invoice_Line_Item__c ili : ilis){
-            if(lineItemMap.containsKey(ili.qime__ItemRef_Id__c)){
-                ili.qime__QB_Id__c = lineItemMap.get(ili.qime__ItemRef_Id__c);
+        for(Invoice_Line_Item__c ili : ilis){
+            if(lineItemMap.containsKey(ili.ItemRef_Id__c)){
+                ili.QB_Id__c = lineItemMap.get(ili.ItemRef_Id__c);
             }
         }
 
@@ -268,9 +268,9 @@ public class QBMap {
     }
 
     public class invoiceReturn {
-        public List<qime__Payment__c> payments{get; set;}
-        public List<qime__Invoice_Payment__c> invoice_payments{get; set;}
-        public qime__Invoice__c inv{get;set;}
+        public List<Payment__c> payments{get; set;}
+        public List<Invoice_Payment__c> invoice_payments{get; set;}
+        public Invoice__c inv{get;set;}
     }
 
     /**
@@ -285,47 +285,47 @@ public class QBMap {
     /**
      * Map invoice query data into invoices, payments, and invoice line item
      * @param invQuery The response data from invoice query
-     * @return List of qime__Invoice__c, qime__Payment__c, qime__Invoice_Payment__c, and qime__Invoice_Line_Item__c
+     * @return List of Invoice__c, Payment__c, Invoice_Payment__c, and Invoice_Line_Item__c
      */
     public static List<SObject> mapInvoices(QBInvoiceQueryJSON invQuery){
-        List<qime__Payment__c> payments = new List<qime__Payment__c>();
-        List<qime__Invoice_Payment__c> inv_payments = new List<qime__Invoice_Payment__c>();
-        List<qime__Invoice_Line_Item__c> ilis = new List<qime__Invoice_Line_Item__c>();
+        List<Payment__c> payments = new List<Payment__c>();
+        List<Invoice_Payment__c> inv_payments = new List<Invoice_Payment__c>();
+        List<Invoice_Line_Item__c> ilis = new List<Invoice_Line_Item__c>();
         List<SObject> returnList = new List<SObject>();
         if(invQuery?.QueryResponse?.Invoice == null){
             return new List<SObject>();
         }
         for(QBInvoiceQueryJSON.Invoice invoice : invQuery?.QueryResponse?.Invoice){
-            qime__Invoice__c inv = new qime__Invoice__c();
+            Invoice__c inv = new Invoice__c();
             Decimal subtotal = 0.0;
-            inv.qime__QB_ID__c = invoice.Id;
-            inv.qime__QB_SyncToken__c = invoice.SyncToken;
-            inv.qime__Allow_Online_ACH_Payment__c = invoice.AllowOnlineACHPayment;
-            inv.qime__Allow_Online_CC_Payment__c = invoice.AllowOnlineCreditCardPayment;
-            inv.qime__Document_Number__c = invoice.DocNumber;
+            inv.QB_ID__c = invoice.Id;
+            inv.QB_SyncToken__c = invoice.SyncToken;
+            inv.Allow_Online_ACH_Payment__c = invoice.AllowOnlineACHPayment;
+            inv.Allow_Online_CC_Payment__c = invoice.AllowOnlineCreditCardPayment;
+            inv.Document_Number__c = invoice.DocNumber;
             inv.name = 'INV-' + invoice.DocNumber;
-            inv.qime__Transaction_Date__c = Date.valueOf(invoice.TxnDate);
-            inv.qime__Customer_Id__c = invoice.CustomerRef?.value;
+            inv.Transaction_Date__c = Date.valueOf(invoice.TxnDate);
+            inv.Customer_Id__c = invoice.CustomerRef?.value;
             try{
-                inv.qime__Delivery_Time__c = (DateTime)Json.deserialize('"'+invoice?.DeliveryInfo?.DeliveryTime+'"', DateTime.class);
+                inv.Delivery_Time__c = (DateTime)Json.deserialize('"'+invoice?.DeliveryInfo?.DeliveryTime+'"', DateTime.class);
             }catch(Exception e){
                 System.debug(e);
             }
 
-            inv.qime__Due_Date__c = Date.valueOf(invoice.DueDate);
-            inv.qime__Total__c = invoice.TotalAmt;
-            inv.qime__Memo__c = invoice?.CustomerMemo?.value;
+            inv.Due_Date__c = Date.valueOf(invoice.DueDate);
+            inv.Total__c = invoice.TotalAmt;
+            inv.Memo__c = invoice?.CustomerMemo?.value;
 
-            inv.qime__emails__c = invoice.BillEmail?.Address;
-            inv.qime__bcc_emails__c = invoice.BillEmailBcc?.Address;
-            inv.qime__cc_emails__c = invoice.BillEmailCc?.Address;
+            inv.emails__c = invoice.BillEmail?.Address;
+            inv.bcc_emails__c = invoice.BillEmailBcc?.Address;
+            inv.cc_emails__c = invoice.BillEmailCc?.Address;
 
-            inv.qime__Balance__c = invoice.Balance;
+            inv.Balance__c = invoice.Balance;
             if(invoice?.TxnTaxDetail?.TotalTax != null){
-                inv.qime__tax__c = invoice?.TxnTaxDetail?.TotalTax;
+                inv.tax__c = invoice?.TxnTaxDetail?.TotalTax;
             }
             if(String.isNotBlank(invoice.SalesTermRef?.name)){
-                inv.qime__Terms__c = invoice.SalesTermRef?.name; 
+                inv.Terms__c = invoice.SalesTermRef?.name; 
             }
 
             if(invoice?.LinkedTxn.size() > 0){
@@ -333,17 +333,17 @@ public class QBMap {
                     if(txn.TxnType != 'Payment'){
                         continue;
                     }
-                    qime__Payment__c p = new qime__Payment__c();
+                    Payment__c p = new Payment__c();
                     p.qb_id__c = txn.TxnId;
                     payments.add(p);
 
-                    qime__Invoice_Payment__c inv_payment = new qime__Invoice_Payment__c();
-                    inv_payment.qime__Payment__r = new qime__Payment__c(qb_id__c = txn.TxnId);
-                    inv_payment.qime__Invoice__r = new qime__Invoice__c(qb_Id__c = invoice.Id);
-                    inv_payment.qime__QB_Invoice_Id__c = invoice.Id;
-                    inv_payment.qime__QB_Payment_Id__c = txn.TxnId;
+                    Invoice_Payment__c inv_payment = new Invoice_Payment__c();
+                    inv_payment.Payment__r = new Payment__c(qb_id__c = txn.TxnId);
+                    inv_payment.Invoice__r = new Invoice__c(qb_Id__c = invoice.Id);
+                    inv_payment.QB_Invoice_Id__c = invoice.Id;
+                    inv_payment.QB_Payment_Id__c = txn.TxnId;
                     // Linked transactions have a unique id of inv id + payment id
-                    inv_payment.qime__qb_Id__c = invoice.Id + txn.TxnId;
+                    inv_payment.qb_Id__c = invoice.Id + '-' +  txn.TxnId;
                     inv_payments.add(inv_payment);
                 }
             }
@@ -355,23 +355,23 @@ public class QBMap {
             }
             Integer lineCount = 0;
             for(QBInvoiceQueryJSON.Line line_item : invoice.Line){
-                qime__Invoice_Line_Item__c ili = new qime__Invoice_Line_Item__c();
-                qime__Invoice__c invRef = new qime__Invoice__c();
+                Invoice_Line_Item__c ili = new Invoice_Line_Item__c();
+                Invoice__c invRef = new Invoice__c();
                 invRef.QB_Id__c = invoice.Id;
-                ili.QB_ID__c = invoice.Id + line_item.id;
-                ili.qime__LineNum__c = line_item.LineNum;
-                ili.qime__Amount__c = line_item.Amount;
+                ili.QB_ID__c = invoice.Id + '-' + line_item.id;
+                ili.LineNum__c = line_item.LineNum;
+                ili.Amount__c = line_item.Amount;
                 if(line_item?.DetailType == 'SalesItemLineDetail'){
-                    ili.qime__ItemRef_Id__c = line_item?.SalesItemLineDetail?.ItemRef?.value;
+                    ili.ItemRef_Id__c = line_item?.SalesItemLineDetail?.ItemRef?.value;
                     ili.Quantity__c = line_item?.SalesItemLineDetail?.Qty;
-                    ili.qime__Unit_Price__c = line_item?.SalesItemLineDetail?.UnitPrice;
-                    ili.qime__Description__c = line_item.Description;
+                    ili.Unit_Price__c = line_item?.SalesItemLineDetail?.UnitPrice;
+                    ili.Description__c = line_item.Description;
 
                 }else if(line_item?.DetailType == 'GroupLineDetail'){
 
-                    ili.qime__ItemRef_Id__c = line_item?.GroupLineDetail?.GroupItemRef?.value;
-                    ili.qime__Quantity__c = line_item?.GroupLineDetail?.Quantity;
-                    ili.qime__Unit_Price__c = line_item?.GroupLineDetail?.Amount;
+                    ili.ItemRef_Id__c = line_item?.GroupLineDetail?.GroupItemRef?.value;
+                    ili.Quantity__c = line_item?.GroupLineDetail?.Quantity;
+                    ili.Unit_Price__c = line_item?.GroupLineDetail?.Amount;
                 }
                 if(String.isNotBlank(line_item?.SalesItemLineDetail?.ServiceDate)){
                     ili.Service_Date__C = Date.valueOf(line_item?.SalesItemLineDetail?.ServiceDate);
@@ -388,7 +388,7 @@ public class QBMap {
                 }
                 if(line_item.DetailType == 'SalesItemLineDetail' && 
                     line_item?.SalesItemLineDetail?.ItemRef?.value == 'SHIPPING_ITEM_ID'){
-                        inv.qime__Shipping_Handling__c = line_item.Amount;
+                        inv.Shipping_Handling__c = line_item.Amount;
                 }
                 if(line_item.DetailType == 'SalesItemLineDetail' || 
                     line_item.DetailType == 'GroupLineDetail' ){
@@ -412,22 +412,22 @@ public class QBMap {
      * @param p The payment that is used for the mapping
      * @return The the list of payments that can be crud to salesforce
      */
-    public static List<qime__Payment__c> mapPayments(QBPaymentQueryJSON json){
-        List<qime__Payment__c> paymentList = new List<qime__Payment__c>();
+    public static List<Payment__c> mapPayments(QBPaymentQueryJSON json){
+        List<Payment__c> paymentList = new List<Payment__c>();
         if(json?.QueryResponse?.Payment == null){
             return paymentList;
         }
 
         for(QBPaymentQueryJSON.Payment payment : json.QueryResponse.Payment){
-            qime__Payment__c p = new qime__Payment__c();
-            p.qime__Amount__c = payment.TotalAmt;
-            p.qime__Transaction_Date__c = Date.valueOf(payment.TxnDate);
+            Payment__c p = new Payment__c();
+            p.Amount__c = payment.TotalAmt;
+            p.Transaction_Date__c = Date.valueOf(payment.TxnDate);
             if(payment?.CustomerRef?.value != null){
-                p.qime__customer_id__c = payment.CustomerRef.value;
+                p.customer_id__c = payment.CustomerRef.value;
             }
-            p.qime__unapplied_amount__c = payment.UnappliedAmt;
-            p.qime__qb_Id__c = payment.Id;
-            p.qime__qb_SyncToken__c = payment.SyncToken;
+            p.unapplied_amount__c = payment.UnappliedAmt;
+            p.qb_Id__c = payment.Id;
+            p.qb_SyncToken__c = payment.SyncToken;
             paymentList.add(p);
         }
 
@@ -439,11 +439,11 @@ public class QBMap {
      * @param termsQuery query of terms from QB
      * @return List of custom setting values for upsert
      */
-    public static List<qime__QB_Terms__c> mapTermsQuery(QBTermJSON termsQuery){
-        List<qime__QB_Terms__c> terms = new List<qime__QB_Terms__c>();
+    public static List<QB_Terms__c> mapTermsQuery(QBTermJSON termsQuery){
+        List<QB_Terms__c> terms = new List<QB_Terms__c>();
         for(QBTermJSON.Term term : termsQuery.QueryResponse.Term ){
-            qime__QB_Terms__c t = new qime__QB_Terms__c();
-            t.qime__QB_Id__c = term.Id;
+            QB_Terms__c t = new QB_Terms__c();
+            t.QB_Id__c = term.Id;
             t.Name = term.Name;
             terms.add(t);
         }

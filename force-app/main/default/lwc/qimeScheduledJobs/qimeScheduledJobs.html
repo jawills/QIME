@@ -1,0 +1,14 @@
+<template>
+     <!-- Datatable -->
+     <lightning-card title={title} icon-name="custom:custom67">
+        <div>
+            <lightning-datatable columns={columns} data={records} hide-checkbox-column key-field="Id" onrowaction={handleRowAction} show-row-number-column>
+            </lightning-datatable>
+        </div>
+    </lightning-card>
+
+    <!-- Spinner -->
+    <div if:true={showLoadingSpinner}>
+        <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+    </div>
+</template>

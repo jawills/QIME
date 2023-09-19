@@ -16,7 +16,7 @@ global class QBPaymentQueueable implements Queueable, Database.AllowsCallouts{
         }
         String query = 'select * from Payment MAXRESULTS '+ String.valueOf(this.iteratorSize) +' STARTPOSITION ' + String.valueOf(this.currentCount);
         QBPaymentQueryJSON queryJson = QBCallout.queryPayments(query);
-        List<qime__Payment__c> payments = QBMap.mapPayments(queryJson);
+        List<Payment__c> payments = QBMap.mapPayments(queryJson);
         Database.update(payments, false);
 
         this.currentCount += this.iteratorSize;

@@ -1,0 +1,11 @@
+<template>
+    <div class="slds-grid slds-wrap slds-gutter">
+        <c-qime-card class="slds-col slds-size_1-of-6" title="Customers In Salesforce" body={sfAccounts} loading={sfAccountsLoading}></c-qime-card>
+        <c-qime-card class="slds-col slds-size_1-of-6" title="Customers In QuickBooks" body={qbAccounts} loading={qbAccountsLoading}></c-qime-card>
+        <c-qime-card class="slds-col slds-size_1-of-6" title="Invoices In Salesforce" body={sfInvoices} loading={sfInvoicesLoading}></c-qime-card>
+        <c-qime-card class="slds-col slds-size_1-of-6" title="Invoices In QuickBooks" body={qbInvoices} loading={qbInvoicesLoading}></c-qime-card>
+        <c-qime-card class="slds-col slds-size_1-of-6" title="Payments In Salesforce" body={sfPayments} loading={sfPaymentsLoading}></c-qime-card>
+        <c-qime-card class="slds-col slds-size_1-of-6" title="Payments In QuickBooks" body={qbPayments} loading={qbPaymentsLoading}></c-qime-card>
+    </div>
+</template>
+

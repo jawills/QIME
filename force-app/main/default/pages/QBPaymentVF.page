@@ -1,2 +1,2 @@
-<apex:page standardcontroller="qime__Payment__c" extensions="QBPaymentController" action="{!syncQB}">
+<apex:page standardcontroller="Payment__c" extensions="QBPaymentController" action="{!syncQB}">
 </apex:page>

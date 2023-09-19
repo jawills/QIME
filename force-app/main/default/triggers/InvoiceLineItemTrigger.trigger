@@ -1,4 +1,4 @@
-trigger InvoiceLineItemTrigger on qime__Invoice_Line_Item__c (before insert, before update) {
+trigger InvoiceLineItemTrigger on Invoice_Line_Item__c (before insert, before update) {
 
     if(Trigger.isBefore && Trigger.isInsert){
         InvoiceLineItemTriggerHandler.beforeInsertHandler(Trigger.new);

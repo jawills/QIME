@@ -4,7 +4,7 @@
     static void makeData(){
         Account a = new Account();
         a.Name = 'Jizuke';
-        a.qime__QB_Id__c = 'Test';
+        a.QB_Id__c = 'Test';
         insert a;
 
         Contact c = new Contact();
@@ -12,23 +12,23 @@
         c.AccountId = a.Id;
         insert c;
         
-        qime__Invoice__c inv = new qime__Invoice__c();
+        Invoice__c inv = new Invoice__c();
         inv.Name = 'INV-XXXX';
-        inv.qime__QB_Id__c = 'test-inv';
+        inv.QB_Id__c = 'test-inv';
         insert inv;
 
-        qime__Invoice_Line_Item__c ili = new qime__Invoice_Line_Item__c();
-        ili.qime__Invoice__c = inv.Id;
-        ili.qime__Quantity__c = 1.0;
-        ili.qime__Unit_Price__c = 2.0;
-        ili.qime__Taxable__c = true;
+        Invoice_Line_Item__c ili = new Invoice_Line_Item__c();
+        ili.Invoice__c = inv.Id;
+        ili.Quantity__c = 1.0;
+        ili.Unit_Price__c = 2.0;
+        ili.Taxable__c = true;
         insert ili; 
     }
 
     @isTest static void testController(){
         Test.setMock(HttpCalloutMock.class, new QBMock());
 
-        qime__Invoice__c inv = QBInvoiceHelper.getInvoice([SELECT Id FROM qime__Invoice__c WHERE Name = 'INV-XXXX'].Id);
+        Invoice__c inv = QBInvoiceHelper.getInvoice([SELECT Id FROM Invoice__c WHERE Name = 'INV-XXXX'].Id);
 
         Test.startTest();
 
@@ -47,7 +47,7 @@
     @isTest static void testCreateController(){
         Test.setMock(HttpCalloutMock.class, new QBMock());
 
-        qime__Invoice__c inv = QBInvoiceHelper.getInvoice([SELECT Id FROM qime__Invoice__c WHERE Name = 'INV-XXXX'].Id);
+        Invoice__c inv = QBInvoiceHelper.getInvoice([SELECT Id FROM Invoice__c WHERE Name = 'INV-XXXX'].Id);
 
         Test.startTest();
 
@@ -65,8 +65,8 @@
 
     @isTest static void testInvoiceCreate(){
         Test.setMock(HttpCalloutMock.class, new QBMock());
-        qime__Invoice__c inv = QBInvoiceHelper.getInvoice([SELECT Id FROM qime__Invoice__c WHERE Name = 'INV-XXXX'].Id);
-        List<qime__Invoice_Line_Item__c> ilis = getILIs(inv.Id);
+        Invoice__c inv = QBInvoiceHelper.getInvoice([SELECT Id FROM Invoice__c WHERE Name = 'INV-XXXX'].Id);
+        List<Invoice_Line_Item__c> ilis = getILIs(inv.Id);
         Test.startTest();
         QBInvoiceResponseJSON invoice = QBCallout.createInvoice(QBMap.mapInvoice(inv, ilis, 'testId'));
         Test.stopTest();
@@ -76,7 +76,7 @@
 
     @isTest static void testInvoiceQuery(){
         Test.setMock(HttpCalloutMock.class, new QBMock());
-        qime__Invoice__c inv = QBInvoiceHelper.getInvoice([SELECT Id FROM qime__Invoice__c WHERE Name = 'INV-XXXX'].Id);
+        Invoice__c inv = QBInvoiceHelper.getInvoice([SELECT Id FROM Invoice__c WHERE Name = 'INV-XXXX'].Id);
         Test.startTest();
         QBInvoiceQueryJSON invoice = QBCallout.getInvoice(inv);
         Test.stopTest();
@@ -127,13 +127,13 @@
     
     }
 
-    private static List<qime__Invoice_Line_Item__c> getILIs(Id invId){
-        return [SELECT Id, qime__Invoice__c, qime__Unit_Price__c,
-                     qime__Quantity__c, qime__Product__c, qime__Amount__c,
-                     qime__Product__r.qime__QB_Id__c, qime__Product__r.qime__QB_Description__c,
-                     qime__QB_Id__c, 
-                     qime__Taxable__c
-                FROM qime__Invoice_Line_Item__c 
-                WHERE qime__Invoice__c =: invId];
+    private static List<Invoice_Line_Item__c> getILIs(Id invId){
+        return [SELECT Id, Invoice__c, Unit_Price__c,
+                     Quantity__c, Product__c, Amount__c,
+                     Product__r.QB_Id__c, Product__r.QB_Description__c,
+                     QB_Id__c, 
+                     Taxable__c
+                FROM Invoice_Line_Item__c 
+                WHERE Invoice__c =: invId];
     }
 }

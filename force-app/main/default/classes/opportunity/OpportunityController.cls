@@ -11,22 +11,22 @@ public class OpportunityController {
     }
 
     public Pagereference createInvoice(){
-        if(opp.qime__Invoices__r.size() > 0){
+        if(opp.Invoices__r.size() > 0){
             throw new QIMEException('Please use the existing Invoice');
         }
         List<SObject> upsertObjects = OpportunityHelper.mapInvoice(opp, olis);
-        qime__Invoice__c inv;
-        List<qime__Invoice_Line_Item__c> ilis = new List<qime__Invoice_Line_Item__c>();
+        Invoice__c inv;
+        List<Invoice_Line_Item__c> ilis = new List<Invoice_Line_Item__c>();
         for(SObject so : upsertObjects){
-            if(so instanceof qime__Invoice__c){
-                inv = (qime__Invoice__c) so;
-            }else if(so instanceof qime__Invoice_Line_Item__c){
-                ilis.add((qime__Invoice_Line_Item__c) so);
+            if(so instanceof Invoice__c){
+                inv = (Invoice__c) so;
+            }else if(so instanceof Invoice_Line_Item__c){
+                ilis.add((Invoice_Line_Item__c) so);
             }
         }
         insert inv;
-        for(qime__Invoice_Line_Item__c ili : ilis){
-            ili.qime__Invoice__c = inv.Id;
+        for(Invoice_Line_Item__c ili : ilis){
+            ili.Invoice__c = inv.Id;
         }
         insert ilis;
         return new PageReference('/'+ inv.Id);

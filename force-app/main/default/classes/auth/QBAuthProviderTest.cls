@@ -33,15 +33,15 @@ public class QBAuthProviderTest {
     private static Map<String,String> setupAuthProviderConfig () 
     { 
         Map<String,String> authProviderConfiguration = new Map<String,String>(); 
-        authProviderConfiguration.put('qime__Client_Id__c', KEY); 
-        authProviderConfiguration.put('qime__Auth_URL__c', AUTH_URL); 
-        authProviderConfiguration.put('qime__Client_Secret__c', SECRET); 
-        authProviderConfiguration.put('qime__Token_URL__c', ACCESS_TOKEN_URL); 
-        authProviderConfiguration.put('qime__API_User_Url__c',API_USER_URL); 
-        authProviderConfiguration.put('qime__API_User_Version_Url__c',
+        authProviderConfiguration.put('Client_Id__c', KEY); 
+        authProviderConfiguration.put('Auth_URL__c', AUTH_URL); 
+        authProviderConfiguration.put('Client_Secret__c', SECRET); 
+        authProviderConfiguration.put('Token_URL__c', ACCESS_TOKEN_URL); 
+        authProviderConfiguration.put('API_User_Url__c',API_USER_URL); 
+        authProviderConfiguration.put('API_User_Version_Url__c',
         API_USER_VERSION_URL); 
-        authProviderConfiguration.put('qime__Scope__c', SCOPE); 
-        authProviderConfiguration.put('qime__Callback_URL__c',REDIRECT_URL); 
+        authProviderConfiguration.put('Scope__c', SCOPE); 
+        authProviderConfiguration.put('Callback_URL__c',REDIRECT_URL); 
         return authProviderConfiguration; 
     
     } 
@@ -51,10 +51,10 @@ public class QBAuthProviderTest {
         String stateToPropogate = 'mocktestState'; 
         Map<String,String> authProviderConfiguration = setupAuthProviderConfig(); 
         QBAuthProvider authProv = new QBAuthProvider(); 
-        authProv.redirectUrl = authProviderConfiguration.get('qime__Callback_URL__c'); 
-        PageReference expectedUrl = new PageReference(authProviderConfiguration.get('qime__Auth_URL__c') + '?client_id='+ 
-        authProviderConfiguration.get('qime__Client_Id__c') +'&response_type=code&scope=scope&redirect_uri='+ 
-        authProviderConfiguration.get('qime__Callback_URL__c') + '&state=' + 
+        authProv.redirectUrl = authProviderConfiguration.get('Callback_URL__c'); 
+        PageReference expectedUrl = new PageReference(authProviderConfiguration.get('Auth_URL__c') + '?client_id='+ 
+        authProviderConfiguration.get('Client_Id__c') +'&response_type=code&scope=scope&redirect_uri='+ 
+        authProviderConfiguration.get('Callback_URL__c') + '&state=' + 
         STATE_TO_PROPOGATE); 
         PageReference actualUrl = authProv.initiate(authProviderConfiguration, STATE_TO_PROPOGATE); 
         System.assertEquals(expectedUrl.getUrl(), actualUrl.getUrl());
@@ -66,7 +66,7 @@ public class QBAuthProviderTest {
         setupAuthProviderConfig(); 
         QBAuthProvider authProv = new QBAuthProvider(); 
         authProv.redirectUrl = authProviderConfiguration.get
-        ('qime__Redirect_Url_c'); 
+        ('Redirect_Url_c'); 
     
         Test.setMock(HttpCalloutMock.class, new 
         QBAuthMockHttpResponseGenerator()); 

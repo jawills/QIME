@@ -24,10 +24,10 @@ global class QBAuthProvider extends Auth.AuthProviderPluginClass {
      * @return OAuth 2.0 page start
      */
     global PageReference initiate(Map<string,string> authProviderConfiguration, String stateToPropagate) {
-        key = authProviderConfiguration.get('qime__Client_Id__c');
-        authUrl = authProviderConfiguration.get('qime__Auth_URL__c');
-        scope = authProviderConfiguration.get('qime__Scope__c');
-        redirectUrl = authProviderConfiguration.get('qime__Callback_URL__c');
+        key = authProviderConfiguration.get('Client_Id__c');
+        authUrl = authProviderConfiguration.get('Auth_URL__c');
+        scope = authProviderConfiguration.get('Scope__c');
+        redirectUrl = authProviderConfiguration.get('Callback_URL__c');
         String urlToRedirect = authUrl+'?response_type=code&client_id='+key+'&redirect_uri='+redirectUrl+'&scope='+scope+
                         '&state='+stateToPropagate;      
         PageReference pageRef = new PageReference(urlToRedirect);                    
@@ -42,12 +42,12 @@ global class QBAuthProvider extends Auth.AuthProviderPluginClass {
         //Here, the developer will get the callback with actual protocol.  
         //Their responsibility is to return a new object called AuthProviderToken
         //This will contain an optional accessToken and refreshToken
-        key = authProviderConfiguration.get('qime__Client_Id__c'); 
-        secret = authProviderConfiguration.get('qime__Client_Secret__c'); 
-        accessTokenUrl = authProviderConfiguration.get('qime__Token_URL__c'); 
-        authUrl = authProviderConfiguration.get('qime__Auth_URL__c');
-        scope = authProviderConfiguration.get('qime__Scope__c');
-        redirectUrl = authProviderConfiguration.get('qime__Callback_URL__c');
+        key = authProviderConfiguration.get('Client_Id__c'); 
+        secret = authProviderConfiguration.get('Client_Secret__c'); 
+        accessTokenUrl = authProviderConfiguration.get('Token_URL__c'); 
+        authUrl = authProviderConfiguration.get('Auth_URL__c');
+        scope = authProviderConfiguration.get('Scope__c');
+        redirectUrl = authProviderConfiguration.get('Callback_URL__c');
         Map<String,String> queryParams = state.queryParameters;
         String code = queryParams.get('code');
         String sfdcState = queryParams.get('state');
@@ -78,10 +78,10 @@ global class QBAuthProvider extends Auth.AuthProviderPluginClass {
      */
     global override Auth.OAuthRefreshResult refresh(Map<String,String> authProviderConfiguration, String refreshToken) {
         HttpRequest req = new HttpRequest();
-        req.setEndpoint(authProviderConfiguration.get('qime__Token_URL__c'));
+        req.setEndpoint(authProviderConfiguration.get('Token_URL__c'));
 
-        String clientId = authProviderConfiguration.get('qime__Client_Id__c');
-        String clientSecret = authProviderConfiguration.get('qime__Client_Secret__c');
+        String clientId = authProviderConfiguration.get('Client_Id__c');
+        String clientSecret = authProviderConfiguration.get('Client_Secret__c');
 
         req.setMethod('POST');
         req.setHeader('Content-Type','application/x-www-form-urlencoded');
@@ -125,4 +125,3 @@ global class QBAuthProvider extends Auth.AuthProviderPluginClass {
     }
 
 }
-
