@@ -43,3 +43,7 @@ Understand what part of the setup page you are at with the Setup helper
 Manage the syncing of invoices, payments, and terms with the scheduled job manager.
 
 ![QIME Scheduled Jobs](/images/manage-scheduled-jobs.png)
+
+## Dependencies
+
+QIME uses the [Metadata API](https://github.com/certinia/apex-mdapi) to help query and create metadata through Apex.
