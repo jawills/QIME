@@ -51,6 +51,7 @@ public class QBCallout {
         try{
             res = http.send(req);
         }catch(Exception e){
+            System.debug(e.getMessage());
             throw new QBException(e.getMessage());
         }
         System.debug(res.getBody());
