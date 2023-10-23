@@ -1,4 +1,4 @@
-public class OpportunityHelper {
+public with sharing class OpportunityHelper {
 
     public static List<SObject> mapInvoice(Opportunity o, List<OpportunityLineItem> olis){
         List<SObject> returnList = new List<SObject>();
@@ -9,6 +9,17 @@ public class OpportunityHelper {
         inv.Subtotal__c = o.Amount;
         inv.Account__c = o.AccountId;
         inv.Transaction_Date__c = o.CloseDate;
+        returnList.add(inv);
+        if(olis == null){
+            return returnList;
+        }
+
+        returnList.addAll(mapOLItoILI(olis));
+        return returnList;
+    }
+
+    public static List<Invoice_Line_Item__c> mapOLItoILI(List<OpportunityLineItem> olis){
+        List<Invoice_Line_Item__c> ilis = new List<Invoice_Line_Item__c>();
 
         for(OpportunityLineItem oli : olis){
             Invoice_Line_Item__c ili = new Invoice_Line_Item__c();
@@ -16,12 +27,10 @@ public class OpportunityHelper {
             ili.Quantity__c = oli.Quantity;
             ili.LineNum__c = oli.SortOrder;
             ili.Product__c = oli.Product2Id;
+            ili.Opportunity_Line_Item__c = oli.Id;
             ilis.add(ili);
         }
-
-        returnList.add(inv);
-        returnList.addAll(ilis);
-        return returnList;
+        return ilis;
     }
 
     public static Opportunity getOpportunity(Id oppId){
