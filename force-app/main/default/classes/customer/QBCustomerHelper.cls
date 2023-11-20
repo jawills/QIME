@@ -1,5 +1,40 @@
 public class QBCustomerHelper {
 
+    public static Account createOrUpdateCustomer(Account acc){
+        if(String.isNotBlank(acc.QB_Id__c) || String.isNotBlank(acc.primary_email__c)){
+            QBCustomerJSON accountData = QBCallout.getCustomer(acc);
+
+            //Check if a customer was found
+            if(accountData.QueryResponse.Customer != null){
+                
+                //Check if only 1 customer was found
+                if(accountData.QueryResponse.Customer.size() == 1){
+                    for(QBCustomerJSON.Customer c : accountData.QueryResponse.Customer){
+                        acc.QB_Id__c = c.id;
+                        System.debug('QB Id: ' + acc.QB_Id__c);
+                        acc.QB_SyncToken__c = c.SyncToken;
+                        System.debug('QB Synctoken: ' + acc.QB_SyncToken__c );
+                    }
+                }else{
+                    //Multiple Customer Error Handling
+                throw new ListException(); 
+                }
+            }
+        }
+
+        QBCustomerResponseJSON accountPushData = QBCallout.createCustomer(QBMap.mapAccountData(acc));
+
+        if(accountPushData.Customer.Id != null){
+            acc.QB_ID__c = accountPushData.Customer.Id;
+        }
+        if(accountPushData.Customer.SyncToken != null){
+            acc.QB_SyncToken__c = accountPushData.Customer.SyncToken;
+        }
+
+        //DML After Callouts
+        return acc;
+    }
+
     /**
      * Wrapper SOQL to get account with all fields
      * @param accId the account Id
@@ -17,6 +52,7 @@ public class QBCustomerHelper {
                       ShippingPostalCode,
                       Phone,
                       Taxable__c,
+                      Primary_Email__c,
                       Tax_Exemption_Reason__c,
                       BillingCity,
                       BillingStreet,

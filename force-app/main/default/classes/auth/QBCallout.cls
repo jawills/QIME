@@ -78,7 +78,13 @@ public class QBCallout {
      * @return The wrapped json response from the QB callout
      */
     public static QBCustomerJSON getCustomer(Account a){
-        String query = 'select * from customer where id = \'' + a.QB_Id__c + '\'';
+        String query = '';
+        if(String.isNotBlank(a.qime__QB_Id__c)){
+          query = 'select * from customer where id = \'' + a.QB_Id__c + '\'';
+        }
+        if(String.isNotBlank(a.primary_email__c)){
+            query = 'select * from customer where PrimaryEmailAddr = \'' + a.primary_email__c + '\'';
+        }
         HttpResponse res = calloutHelper('query', 'POST', query);
         return QBCustomerJSON.parse(res.getBody());
     }

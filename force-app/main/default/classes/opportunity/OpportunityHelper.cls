@@ -27,7 +27,9 @@ public with sharing class OpportunityHelper {
             ili.Quantity__c = oli.Quantity;
             ili.LineNum__c = oli.SortOrder;
             ili.Product__c = oli.Product2Id;
-            ili.Opportunity_Line_Item__c = oli.Id;
+            ili.Opportunity_Product__c = oli.Id;
+            //Seperate Id is useful to check for upsert / delete
+            ili.qime__Opportunity_Product_Id__c = oli.Id;
             ilis.add(ili);
         }
         return ilis;

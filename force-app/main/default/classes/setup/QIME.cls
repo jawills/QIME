@@ -1,6 +1,6 @@
 global class QIME {
     @TestVisible
-    private static final String CURRENT_VERSION_NUMBER = 'v2.7.0';
+    private static final String CURRENT_VERSION_NUMBER = 'v3.0.0';
 
     /**
      * @description Returns the current version number of QIME Logger
@@ -18,5 +18,13 @@ global class QIME {
     
     public class SessionId {
         public String sessionId;
+    }
+
+    public static List<qime__QIME_Config__mdt> getConfig(){
+        if(Test.isRunningTest()){
+            return new List<qime__QIME_Config__mdt>{QBTestHelper.getConfig()};
+        }
+        return [SELECT Id,
+        qime__Create_Invoice_From_Opp__c, qime__Invoice_Stage_Name__c FROM qime__QIME_Config__mdt LIMIT 1];
     }
 }

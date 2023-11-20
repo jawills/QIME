@@ -13,6 +13,8 @@ public class QBTestHelper {
         config.QB_Product_Id__c = '1';
         config.Use_Line_Item__c = true;
         config.Link_By_Memo__c = true;
+        config.qime__Create_Invoice_From_Opp__c = true;
+        config.Invoice_Stage_Name__c = 'Closed Won';
         return config;
     } 
 }
