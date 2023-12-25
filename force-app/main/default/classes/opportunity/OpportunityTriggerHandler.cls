@@ -58,7 +58,7 @@ public class OpportunityTriggerHandler {
             invMap.put(inv.Opportunity__c, inv.Id);
         }
         
-        List<OpportunityLineItem> olis = [SELECT Id, OpportunityId,UnitPrice,Quantity,
+        List<OpportunityLineItem> olis = [SELECT Id, OpportunityId,UnitPrice,Quantity, TotalPrice,
                                             SortOrder, Product2Id
                                          FROM OpportunityLineItem 
                                          WHERE OpportunityId IN : new List<Id>(oppIdSet)];

@@ -23,7 +23,8 @@ public with sharing class OpportunityHelper {
 
         for(OpportunityLineItem oli : olis){
             Invoice_Line_Item__c ili = new Invoice_Line_Item__c();
-            ili.Amount__c = oli.UnitPrice;
+            ili.Amount__c = oli.TotalPrice;
+            ili.Unit_Price__c = oli.UnitPrice;
             ili.Quantity__c = oli.Quantity;
             ili.LineNum__c = oli.SortOrder;
             ili.Product__c = oli.Product2Id;
@@ -37,7 +38,7 @@ public with sharing class OpportunityHelper {
 
     public static Opportunity getOpportunity(Id oppId){
         return [SELECT Id, Name, CloseDate, StageName, Amount,Account.QB_Id__c,
-                (SELECT Id, Product2Id, Product2.QB_Id__c, quantity, UnitPrice, ListPrice,SortOrder 
+                (SELECT Id, Product2Id, Product2.QB_Id__c, quantity, UnitPrice,TotalPrice, ListPrice,SortOrder 
                     FROM OpportunityLineItems),
                 (SELECT Id FROM Invoices__r) 
                 FROM Opportunity 
