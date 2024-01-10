@@ -101,23 +101,24 @@ public class QBMap {
         
         //Create Billing Address
         QBInvoiceJSON.BillAddr billAddy = new QBInvoiceJSON.BillAddr();
-        billAddy.City = inv.Bill_City__c;
-        billAddy.Line1 = inv.Bill_Street__c + ' ' + inv.Bill_Suite__c;
-        billAddy.CountrySubDivisionCode = inv.Bill_State__c;
-        billAddy.PostalCode = inv.Bill_Zip__c;
-        billAddy.Country = inv.Bill_Country__c;
+        billAddy.City = nullCheck(inv.Bill_City__c);
+        billAddy.Line1 = nullCheck(inv.Bill_Street__c) + ' ' + nullCheck(inv.Bill_Suite__c);
+        billAddy.CountrySubDivisionCode = nullCheck(inv.Bill_State__c);
+        billAddy.PostalCode = nullCheck(inv.Bill_Zip__c);
+        billAddy.Country = nullCheck(inv.Bill_Country__c);
         invoiceObj.BillAddr = billAddy;
 
         //Create Shipping Address
         QBInvoiceJSON.BillAddr shipAddy = new QBInvoiceJSON.BillAddr();
 
-        shipAddy.City = inv.Ship_City__c;
-        shipAddy.Line1 = inv.Ship_Street__c + ' ' + inv.Ship_Suite__c;
-        shipAddy.PostalCode = inv.Ship_Zip__c;
-        shipAddy.CountrySubDivisionCode = inv.Ship_State__c;
-        shipAddy.Country = inv.Ship_Country__c;
+        shipAddy.City = nullCheck(inv.Ship_City__c);
+        shipAddy.Line1 = nullCheck(inv.Ship_Street__c) + ' ' + nullCheck(inv.Ship_Suite__c);
+        shipAddy.PostalCode = nullCheck(inv.Ship_Zip__c);
+        shipAddy.CountrySubDivisionCode = nullCheck(inv.Ship_State__c);
+        shipAddy.Country = nullCheck(inv.Ship_Country__c);
 
         invoiceObj.ShipAddr = shipAddy;
+
 
         //map sales rep and po number (Not possible to add sales rep)
         invoiceObj.CustomField = new List<QBInvoiceJSON.CustomField>();
@@ -449,6 +450,18 @@ public class QBMap {
         }
 
         return terms; 
+    }
+
+    /**
+    * Check if string is null and return empty string
+    * @param value string to check if null
+    * @return string value if not null otherwise null
+    */
+    private static string nullCheck(String value){
+        if(value == null){
+            return '';
+        }
+        return value;
     }
 
 }

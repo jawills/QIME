@@ -9,6 +9,7 @@ public with sharing class OpportunityHelper {
         inv.Subtotal__c = o.Amount;
         inv.Account__c = o.AccountId;
         inv.Transaction_Date__c = o.CloseDate;
+        
         returnList.add(inv);
         if(olis == null){
             return returnList;
