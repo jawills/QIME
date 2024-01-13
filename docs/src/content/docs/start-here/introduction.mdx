@@ -1,0 +1,137 @@
+---
+title: Start Here
+excerpt: Learn how to integrate invoices, payments, and customers from Salesforce to Quickbooks Online.
+tags:
+  - Salesforce
+  - Integration
+  - QIME
+  - QuickBooks Online
+  - QBO
+---
+
+
+Companies wanting to supercharge their Salesforce implementation look to integrate data from third-party systems like QuickBooks. In the past, this has been cumbersome, and expensive. In part, because every company's Salesforce has slightly different configurations, and in part, because most QuickBooks packages put you in a box and are not configurable. With QIME (QuickBooks Integrations Made Easy), seamless QuickBooks integrations have arrived to the Salesforce ecosystem. QIME is the culmination of 5 years of custom QuickBooks integrations, distilled into a free, open-source package that is usable for the Salesforce community. QIME allows businesses to sync invoices, customers, and payments between the two systems. Below are the two most-common use cases that QIME solves.
+
+## Why Integrate Salesforce And QuickBooks Online?
+
+Frequently, companies want to use their opportunities with opportunity products and push this information as an invoice to QuickBooks. With QIME, this is the primary use case. QIME was made in mind so that companies can seamlessly push their Sales data directly to QuickBooks, and collect payments on the invoices. Additionally, payments and balance dues are all tied to individual customers, so the power of Salesforce reporting can be leveraged to make pipeline reports, financial decisions, and more.
+
+## Before We Get Started
+
+If you resonated with either of these use cases, QIME can be used to integrate your QuickBooks and Salesforce data. Let's discuss how to configure QIME in your Salesforce instance. Keep in mind that it is considered "Best-Practice" to configure this package in a sandbox first to see how your data and business process will integrate with the package.
+
+To follow the latest developments with QIME, check out the [GitHub repository](https://github.com/jawills/QIME). Additionally, if you need assistance with implementing QIME, and all things Salesforce, reach out to us [here](https://www.g2technologies.com/contact-us).
+
+## Requirements
+
+The following software editions and permissions are required to configure QIME:
+
+- Salesforce Enterprise Edition
+- Salesforce Administrator Profile
+- QuickBooks Online Essentials
+- QuickBooks Online Administrator User
+
+## QIME Package Links
+
+Please use the following links to install the latest version of QIME:
+
+- Prod: https://login.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000YKbr&isdtp=p1
+- Sandbox https://test.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000YKbr&isdtp=p1
+
+## QuickBooks Authentication
+
+To set up the authentication for QBO, perform the following:
+
+1. Navigate to [QBO](https://developer.intuit.com/app/developer/qbo/docs/get-started) to sign in as a developer.
+2. Go to Dashboard -> Create an app
+3. Give the app a name like `QIME` or `Salesforce`
+4. Use the scope `com.intuit.quickbooks.accounting`
+
+If the QuickBooks environment is a sandbox, proceed with using the Development settings.
+
+If this is a production environment, a few things will need to be completed to get the api credentials. This includes:
+
+- Verifying your email
+- Completing the app assessment questionnaire
+
+Once this has been completed, go to the `Keys & Credentials`. This section will be used to store information and configure items within Salesforce.
+
+### Getting the Company Id
+
+The easiest way to get the company id (realm id) for a QuickBooks Online company, perform the following:
+
+1. Go to `API Docs & Tools` -> `API Explorer`
+2. Scroll down to a request like `Query an account`
+3. On the right side, there is a section with a url. The number in pink after `/v3/company/` is the company Id.
+
+## Authentication In Salesforce
+
+### Auth. Providers
+
+Go to `Setup` -> `Auth. Providers` and create a new `Auth. Provider` with the following configuration:
+
+- Provider Type: `QBAuthProvider`
+- Name: `QB Auth Provider`
+- URL Suffix: `QB_Auth_Provider`
+- Auth URL: `https://appcenter.intuit.com/connect/oauth2`
+- Token URL: `https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer`
+- Scope: `com.intuit.quickbooks.accounting`
+- Realm Id: The company Id copied previously
+- Minorversion: `65`
+- Execute Registration As: Any Admin User
+
+At the bottom of the page, there are links to initialize and test the Auth. Provider. Take the `Callback URL` in the `Salesforce Configuration` section, and copy it into the `Callback URL` in the `Auth. Provider Detail` section.
+
+Additionally, in the QuickBooks App, add the `Callback URL` as a redirect URI.
+
+To test that the configuration is setup correctly, in the `Auth. Provider` page, open the `Test-Only Initialization URL` in a new tab, and sign into the desired QuickBooks account. If everything is configured correctly, you should be greeted with a page full of data in an xml format.
+
+### Named Credential
+
+Within the [Winter '23 Salesforce release](https://help.salesforce.com/s/articleView?id=release-notes.rn_security_other_custom_named_credentials.htm&release=240&type=5), named credentials were upgraded with more features. One of these features includes selecting which users can run the named credential. This Salesforce component simplifies the connection between external, third-party services like QuickBooks, and allows the apex code to easily callout and update the necessary authentication details.
+
+To configure the Named credential, go to `Setup` -> `Named Credentials` and go to the `External Credentials` tab. From here, create a new record with the following properties:
+
+- Label: `QB External Credential`
+- Name: `QB External Credential`
+- Authentication Protocol: `OAuth 2.0`
+- Authentication Flow Type: `Browser Flow`
+- Authentication Provider: `QBAuthProvider`
+
+From here, we can map the permissions to allow or restrict users to run the QuickBooks code. To configure for all users, create a new `Permission Set Mapping` with the following properties:
+
+- Permission Set: `QBO User`
+- Sequence Number: `1`
+- Identity Type: `Named Principal`
+
+Next, the named credential needs to be created, which is the middleware that allows the apex code to access the authorization to QuickBooks. To configure this, go back to the `Named Credential` tab and create a new record with the following properties:
+
+- Label: `QB Named Credential`
+- Name: `QB_Named_Credential`
+- URL: `https://quickbooks.api.intuit.com` \*
+- External Credential: `QB External Credential`
+- Generate Authorization Header: `False`
+- Allow Formulas in HTTP Header: `True`
+- Allowed Namespaces: `QIME`
+
+\* If using a QuickBooks sandbox environment, user the following URL: `https://sandbox-quickbooks.api.intuit.com`
+
+With this, all the configuration is done to authenticate with QuickBooks! All that needs to be performed is to authenticate with QuickBooks. To perform this, go to the `QB External Credential`, and scroll to the `Permission Set Mappings`, and under the `Actions` column for the `QBO User` permission set mapping, click the arrow to see more options, and press `Authenticate`. This will initiate the authentication flow, and store the credentials securely within Salesforce.
+
+We're now ready to start syncing QuickBooks data with Salesforce. There are two important things to be mindful of with the authentication flow.
+
+1. Only the first company can be configured per QuickBooks accounts. This means that if there is a sandbox account tied to the developer account, this will need to be deleted. Additionally, if multiple QuickBooks companies are tied to the same email address, only the first company is used.
+2. The named credential flow uses a process called `OAuth 2.0` to securely authenticate between Salesforce and QuickBooks. This does not store the username and password of the user that authenticates to QuickBooks, but a token that verifies the authenticity of the connection. This token will rotate, or change, hourly, so it is important to make callouts every hour to prevent the token from expiring. If the token expires, just perform the authentication step above to login and get a new token.
+
+
+
+
+
+## Conclusion
+
+QIME is a great tool that connects Salesforce and QuickBooks. It is a flexible package that covers multiple use cases for companies. Additionally, it is free, open-source software (foss), so there is no need to pay high monthly fees to integrate your data. If you are interested in having QIME configured for you, reach out below.
+
+Github source code [here](https://github.com/jawills/QIME)
+
+QIME is currently in the process of being approved on the AppExchange.
+

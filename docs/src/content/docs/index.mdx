@@ -1,0 +1,36 @@
+---
+title: Welcome to QIME
+description: Get started integrating QBO and Salesforce
+template: splash
+hero:
+  tagline: Get started integrating QBO and Salesforce!
+  image:
+    file: ../../assets/houston.webp
+  actions:
+    - text: Start Here
+      link: /start-here/introduction
+      icon: right-arrow
+      variant: primary
+    - text: Learn more about 1Sync
+      link: https://1sync.co
+      icon: external
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Next steps
+
+<CardGrid stagger>
+	<Card title="Install QIME" icon="pencil">
+		Install QIME into your target org to get the integration package.
+	</Card>
+	<Card title="Authenticate QB" icon="add-document">
+		Configure the package and authenticate with QB
+	</Card>
+	<Card title="Sync Data" icon="setting">
+		Bring your data from QB to Salesforce
+	</Card>
+	<Card title="Get In Touch" icon="open-book">
+		Need assistance getting QIME configured? [Get in Touch](https://www.1sync.co/contact).
+	</Card>
+</CardGrid>
