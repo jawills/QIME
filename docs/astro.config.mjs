@@ -3,8 +3,7 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://jawills.github.io',
-	base: '/QIME',
+	site: 'https://qime.1sync.co',
 	integrations: [
 		starlight({
 			title: 'QIME',
