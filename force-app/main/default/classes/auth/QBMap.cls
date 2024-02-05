@@ -134,7 +134,8 @@ public class QBMap {
 
             QBInvoiceJSON.ItemRef itemRef = new QBInvoiceJSON.ItemRef();
 
-            itemRef.value = config.QB_Product_Id__c; 
+            itemRef.value = config.QB_Product_Id__c;
+            detail.ItemRef = itemRef;
             detail.Qty = 1.0;
             detail.TaxCodeRef = new QBInvoiceJSON.ItemRef();
             detail.TaxCodeRef.value = 'TAX';
