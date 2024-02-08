@@ -16,6 +16,7 @@
 public class QBInvoiceJSON {
 
 	public class Line {
+		public String Id;
 		public Double Amount;
 		public String DetailType;
 		public Double Qty;

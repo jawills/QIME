@@ -146,10 +146,19 @@ public class QBMap {
             for(Invoice_Line_Item__c ili : ilis){
                 QBInvoiceJSON.Line line = new QBInvoiceJSON.Line();
                 //map line item fields
-                
+                if(String.isNotBlank(ili.QB_ID__c)){
+                    Pattern p = Pattern.compile('([0-9]*)-([0-9])*');
+                    Matcher pm = p.matcher( ili.QB_Id__c );
+
+                    if( pm.matches() ){
+                        line.Id = pm.group(2);
+                    }
+                }
                 line.Amount = ili.Amount__c;
                 line.Description = ili.Product__r.QB_Description__c;
-    
+                if(String.isNotBlank(ili.Description__c)){
+                    line.Description = ili.Description__c;
+                }
                 //@todo unhardcode this
                 line.DetailType = 'SalesItemLineDetail';
                 QBInvoiceJSON.SalesItemLineDetail detail = new QBInvoiceJSON.SalesItemLineDetail();

@@ -131,7 +131,7 @@
         return [SELECT Id, Invoice__c, Unit_Price__c,
                      Quantity__c, Product__c, Amount__c,
                      Product__r.QB_Id__c, Product__r.QB_Description__c,
-                     QB_Id__c, 
+                     QB_Id__c, Description__c,
                      Taxable__c
                 FROM Invoice_Line_Item__c 
                 WHERE Invoice__c =: invId];
