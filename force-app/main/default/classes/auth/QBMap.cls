@@ -90,10 +90,10 @@ public class QBMap {
         customerRef.value = customerId;
         invoiceObj.CustomerRef = customerRef;
         
-        //Map description
-        // QBInvoiceJSON.MemoRef memoRef = new QBInvoiceJSON.MemoRef();
-        // memoRef.value = inv.Description__c;
-        // invoiceObj.CustomerMemo = memoRef;
+        //Map Memo
+        QBInvoiceJSON.MemoRef memoRef = new QBInvoiceJSON.MemoRef();
+        memoRef.value = inv.Memo__c;
+        invoiceObj.CustomerMemo = memoRef;
         //map billing terms @todo map this based on terms
         QBInvoiceJSON.SalesTermRef sales = new QBInvoiceJSON.SalesTermRef();
         sales.value = mapTerms(inv.Terms__c);

@@ -1,6 +1,6 @@
 global class QIME {
     @TestVisible
-    private static final String CURRENT_VERSION_NUMBER = 'v3.4.0';
+    private static final String CURRENT_VERSION_NUMBER = 'v3.5.0';
 
     /**
      * @description Returns the current version number of QIME Logger

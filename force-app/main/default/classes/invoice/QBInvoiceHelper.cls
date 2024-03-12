@@ -201,6 +201,7 @@ public class QBInvoiceHelper {
                       Balance__c,
                        Name, 
                        QB_Id__c,
+                       Memo__c,
                        Opportunity__r.Account.QB_Id__c,
                        Opportunity__r.AccountId,
                        QB_SyncToken__c,
