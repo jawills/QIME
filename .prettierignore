@@ -6,5 +6,5 @@
 .localdevserver
 .sfdx
 .vscode
-
+force-app/main/default/classes/mdapi
 coverage/
