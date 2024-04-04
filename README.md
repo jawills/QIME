@@ -5,8 +5,9 @@ A free, open-source Salesforce -> Quickbooks Online integration.
 ## Package
 
 Please use the following urls to install the latest version:
-- [Production](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000HyoO)
-- [Sandbox](https://test.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000HyoO)
+
+- [Production](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000Hyoi)
+- [Sandbox](https://test.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000Hyoi)
 
 ## Features
 
@@ -24,7 +25,6 @@ Please use the following urls to install the latest version:
 ## Configure
 
 Please see my [write-up](https://g2technologies.com/blogs/learn/supercharge-your-salesforce-qbo-integration-today) to learn how to configure this inside your org. Additionally, you can see a visual tutorial on [youtube](https://youtu.be/ZRwzeuJRmPg).
-
 
 ## Dashbaord
 

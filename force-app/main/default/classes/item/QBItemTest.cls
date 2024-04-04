@@ -57,6 +57,8 @@ public class QBItemTest {
 
   @isTest(seeAllData=false)
   static void testController() {
+    Test.setMock(HttpCalloutMock.class, new Mock());
+
     Product2 prod = [SELECT Id FROM Product2 WHERE Name = 'Test Prod'];
 
     Test.startTest();
