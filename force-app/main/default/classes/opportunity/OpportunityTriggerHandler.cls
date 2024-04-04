@@ -42,16 +42,26 @@ public class OpportunityTriggerHandler {
         }
 
 
+        // Retrieve existing invoices
+        List<Invoice__c> existingInvs = [SELECT Id, opportunity__c FROM Invoice__c WHERE Id IN: new Map<Id, Opportunity>(opps).keySet() ];
+        for(Invoice__c inv : existingInvs){
+            invMap.put(inv.Opportunity__c, inv.Id);
+        }
+
         for(Opportunity opp : opps){
             if(opp.StageName == config[0].qime__Invoice_Stage_Name__c && opp.StageName != oldOppMap.get(opp.Id).StageName){
                 List<SObject> sObjectList = OpportunityHelper.mapInvoice(opp, null);
-                invs.add((Invoice__c) sObjectList[0]);
+                Invoice__c inv = (Invoice__c) sObjectList.remove(0);
+                if(invMap.containsKey(opp.Id)){
+                    inv.Id = invMap.get(opp.Id);
+                }
+                invs.add(inv);
                 oppIdSet.add(opp.Id);
             }
         }
         
         if(invs.size() > 0){
-            insert invs;
+            upsert invs;
         }
 
         for(Invoice__c inv : invs){
@@ -73,7 +83,7 @@ public class OpportunityTriggerHandler {
         }
 
         if(ilis.size() > 0){
-            insert ilis;
+            Database.upsert(ilis, Invoice_Line_Item__c.OLI_Id__c);
         }
 
     }

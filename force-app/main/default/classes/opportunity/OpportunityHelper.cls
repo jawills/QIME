@@ -32,6 +32,8 @@ public with sharing class OpportunityHelper {
             ili.Opportunity_Product__c = oli.Id;
             //Seperate Id is useful to check for upsert / delete
             ili.qime__Opportunity_Product_Id__c = oli.Id;
+            ili.OLI_Id__c = oli.Id;
+
             ilis.add(ili);
         }
         return ilis;
