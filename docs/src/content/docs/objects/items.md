@@ -32,7 +32,7 @@ With the above configuration, we can mark products as `qime__QB_Product__c` to `
 From here, we can run the following code to push all products:
 
 ```java
-QBItemBatch batch = new QBItemBatch();
+qime.QBItemBatch batch = new qime.QBItemBatch();
 Database.executeBatch(batch, 20);
 ```
 

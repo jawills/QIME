@@ -1,4 +1,4 @@
-public class QBItemBatch implements Database.Batchable<sobject>, Database.AllowsCallouts, Schedulable {
+global class QBItemBatch implements Database.Batchable<sobject>, Database.AllowsCallouts, Schedulable {
   public void execute(SchedulableContext SC) {
     QBItemBatch batch = new QBItemBatch();
     Database.executeBatch(batch, 20);
