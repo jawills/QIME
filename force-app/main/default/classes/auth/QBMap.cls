@@ -274,7 +274,11 @@ public class QBMap {
     inv.QB_ID__c = json.Invoice.Id;
     inv.QB_SyncToken__c = json.Invoice.SyncToken;
     inv.balance_Due__c = json.Invoice.Balance;
-
+    inv.Document_Number__c = json.Invoice.DocNumber;
+    inv.Total__c = json.Invoice.TotalAmt;
+    if (json.Invoice?.TxnTaxDetail?.TotalTax != null) {
+      inv.tax__c = json.Invoice?.TxnTaxDetail?.TotalTax;
+    }
     inv.name = 'INV-' + json.Invoice.DocNumber;
 
     for (QBInvoiceResponseJSON.Line ili : json.Invoice.Line) {
@@ -284,8 +288,13 @@ public class QBMap {
     }
 
     for (Invoice_Line_Item__c ili : ilis) {
-      if (lineItemMap.containsKey(ili.ItemRef_Id__c)) {
-        ili.QB_Id__c = lineItemMap.get(ili.ItemRef_Id__c);
+      if (lineItemMap.containsKey(ili.qime__Product__r.qime__QB_Id__c)) {
+        ili.QB_Id__c =
+          inv.QB_ID__c +
+          '-' +
+          lineItemMap.get(ili.qime__Product__r.qime__QB_Id__c);
+      } else {
+        System.debug(ili.qime__Product__r.qime__QB_Id__c);
       }
     }
 
