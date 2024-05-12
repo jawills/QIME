@@ -1,4 +1,4 @@
-![QIME Logo](/images/qime-logo.svg)
+![QIME Logo](/images/QIME-Logo.svg)
 
 # QIME - Quickbooks Integrations Made Easy
 
