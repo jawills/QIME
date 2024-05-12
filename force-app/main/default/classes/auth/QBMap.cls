@@ -66,7 +66,12 @@ public class QBMap {
     //Initialize invoice object
     QBInvoiceJSON invoiceObj = new QBInvoiceJSON();
     QIME_Config__mdt config = [
-      SELECT Id, Use_Line_Item__c, QB_Product_Id__c
+      SELECT
+        Id,
+        Use_Line_Item__c,
+        QB_Product_Id__c,
+        Use_Tax_Id__c,
+        Default_Tax_Id__c
       FROM QIME_Config__mdt
       WHERE Label = 'Default'
     ];
@@ -147,7 +152,7 @@ public class QBMap {
       itemRef.value = config.QB_Product_Id__c;
       detail.ItemRef = itemRef;
       detail.Qty = 1.0;
-      detail.TaxCodeRef = new QBInvoiceJSON.ItemRef();
+      detail.TaxCodeRef = new QBInvoiceJSON.TaxCodeRef();
       detail.TaxCodeRef.value = 'TAX';
       line.SalesItemLineDetail = detail;
       invoiceObj.Line.add(line);
@@ -178,11 +183,20 @@ public class QBMap {
         detail.ItemRef = itemRef;
         detail.Qty = ili.Quantity__c;
         detail.UnitPrice = ili.Unit_Price__c;
-        detail.TaxCodeRef = new QBInvoiceJSON.ItemRef();
-        detail.TaxCodeRef.value = 'TAX';
-        if (ili.taxable__c) {
-          detail.TaxCodeRef.value = 'NON';
+        detail.TaxCodeRef = new QBInvoiceJSON.TaxCodeRef();
+
+        if (config.Use_Tax_Id__c) {
+          detail.TaxCodeRef.value = config.default_Tax_Id__c;
+          if (String.isNotBlank(inv.Account__r.QB_Default_Tax_Code__c)) {
+            detail.TaxCodeRef.value = inv.Account__r.QB_Default_Tax_Code__c;
+          }
+        } else {
+          detail.TaxCodeRef.value = 'TAX';
+          if (ili.taxable__c) {
+            detail.TaxCodeRef.value = 'NON';
+          }
         }
+
         line.SalesItemLineDetail = detail;
         invoiceObj.Line.add(line);
       }
@@ -255,6 +269,51 @@ public class QBMap {
     returnVar.payments = payments;
     returnVar.inv = inv;
     return returnVar;
+  }
+
+  /**
+   * Map customer query from QBO Json to Salesforce Account
+   * @param json Query json from QBO
+   * @return the list of customers mapped as accounts
+   */
+  public static List<Account> mapCustomersToAccounts(QBCustomerJSON json) {
+    List<Account> accs = new List<Account>();
+    if (json.QueryResponse?.Customer == null) {
+      return accs;
+    }
+    for (QBCustomerJSON.Customer cus : json.QueryResponse.Customer) {
+      Account acc = new Account();
+      acc.Name = cus.CompanyName;
+      acc.qime__QB_Id__c = cus.Id;
+      acc.qime__QB_Synctoken__c = cus.SyncToken;
+
+      if (cus?.BillAddr != null) {
+        acc.BillingStreet = cus.BillAddr.Line1;
+        acc.BillingState = cus.BillAddr.CountrySubDivisionCode;
+        acc.BillingCity = cus.BillAddr.City;
+        acc.BillingPostalCode = cus.BillAddr.PostalCode;
+        acc.BillingCountry = cus.BillAddr.Country;
+      }
+
+      if (cus?.ShipAddr != null) {
+        acc.ShippingStreet = cus.ShipAddr.Line1;
+        acc.ShippingState = cus.ShipAddr.CountrySubDivisionCode;
+        acc.ShippingCity = cus.ShipAddr.City;
+        acc.ShippingPostalCode = cus.ShipAddr.PostalCode;
+        acc.ShippingCountry = cus.ShipAddr.Country;
+      }
+
+      acc.QB_Default_Tax_Code__c = cus.DefaultTaxCodeRef?.value;
+      acc.Balance_In_QB__c = cus.Balance;
+      acc.qime__Resale_Number__c = cus.ResaleNum;
+      acc.qime__Primary_Email__c = cus.PrimaryEmailAddr?.Address;
+      acc.Phone = cus.PrimaryPhone?.FreeFormNumber;
+      acc.qime__Taxable__c = cus.Taxable;
+      acc.qime__Tax_Exemption_Reason__c = cus.TaxExemptionReasonId;
+      accs.add(acc);
+    }
+
+    return accs;
   }
 
   /**

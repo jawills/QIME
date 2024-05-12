@@ -289,6 +289,7 @@ public class QBInvoiceHelper {
         Ship_Zip__c,
         Ship_State__c,
         Ship_Country__c,
+        Account__r.QB_Default_Tax_Code__c,
         (
           SELECT
             Id,

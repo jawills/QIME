@@ -10,8 +10,6 @@ Next, we will cover how to sync invoices between QuickBooks and Salesforce. Ther
 - Linking products between QuickBooks and Salesforce
 - Setting up the invoice terms
 
-
-
 ## Syncing Terms
 
 Invoice terms are unique per instance of QuickBooks. Companies can also add additional custom invoice terms within QuickBooks. Thus, we need a way to sync the terms between environments. To do this, there are two places that the invoice terms are stored under:
@@ -89,3 +87,21 @@ During an initial setup, it is advised to sync all invoices from QuickBooks to S
 ```apex
 System.enqueueJob(new qime.QBInvoiceQueueable(0, 0, 50, 0));
 ```
+
+## Setting A Tax Id
+
+International companies need to specify a tax code, or will recieve the following error:
+
+```
+Make sure all your transactions have a GST/HST rate before you save
+```
+
+To use this feature, go to custom metadata -> QIME Config -> Default,
+
+and ensure that `qime__Use_Tax_Id__c` is set to true.
+
+Additionally, you will need a default tax id. This can be set under `qime__Default_Tax_Id__c`.
+
+To see the default Id, the easiest way is to go to an account in SF and press `Pull from QB`, and read the `QB_Default_Tax_Code__c` field.
+
+**NOTE: The integration will use the tax code set on the customer over the default code if it is present.**

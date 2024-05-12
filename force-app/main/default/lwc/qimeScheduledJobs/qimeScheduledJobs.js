@@ -6,9 +6,11 @@ import getScheduledJobs from '@salesforce/apex/SchedulerController.getScheduledJ
 import scheduleInvoiceJob from '@salesforce/apex/SchedulerController.scheduleInvoiceJob';
 import schedulePaymentJob from '@salesforce/apex/SchedulerController.schedulePaymentJob';
 import scheduleTermJob from '@salesforce/apex/SchedulerController.scheduleTermJob';
+import scheduleCustomerJob from '@salesforce/apex/SchedulerController.scheduleCustomerJob';
 import unscheduleInvoiceJob from '@salesforce/apex/SchedulerController.unscheduleInvoiceJob';
 import unschedulePaymentJob from '@salesforce/apex/SchedulerController.unschedulePaymentJob';
 import unscheduleTermJob from '@salesforce/apex/SchedulerController.unscheduleTermJob';
+import unscheduleCustomerJob from '@salesforce/apex/SchedulerController.unscheduleCustomerJob';
 
 export default class QimeScheduledJobs extends LightningElement {
     title = 'QIME Scheduled Jobs';
@@ -70,6 +72,9 @@ export default class QimeScheduledJobs extends LightningElement {
             case 'Terms':
                 scheduleTermJob();
                 break;
+            case 'Customers':
+                scheduleCustomerJob();
+                break;
         }
     }
 
@@ -83,6 +88,9 @@ export default class QimeScheduledJobs extends LightningElement {
                 break;
             case 'Terms':
                 unscheduleTermJob();
+                break;
+            case 'Customers':
+                unscheduleCustomerJob();
                 break;
         }
     }
@@ -102,6 +110,11 @@ export default class QimeScheduledJobs extends LightningElement {
                         'scheduleFrequency':   'Hourly',
                         'isScheduled':  scheduledJobResult.termJob}
         rows.push(termRow);
+
+        let customerRow = {'scheduledObject': 'Customers',
+        'scheduleFrequency':   'Hourly',
+        'isScheduled':  scheduledJobResult.customerJob}
+        rows.push(customerRow);
 
         this.records = rows;
     }

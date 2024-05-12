@@ -62,6 +62,11 @@ public class QBCallout {
       System.debug(e.getMessage());
       throw new QBException(e.getMessage());
     }
+    if (res.getStatusCode() >= 500 || res.getStatusCode() == 401) {
+      throw new QBException(
+        'An authorization error ocurred. Please ensure QIME is configured correctly before syncing'
+      );
+    }
     System.debug(res.getBody());
     handleResponseError(res.getBody());
     return res;
@@ -188,6 +193,16 @@ public class QBCallout {
   public static QBInvoiceQueryJSON queryInvoices(String query) {
     HttpResponse res = calloutHelper('query', 'POST', query);
     return QBInvoiceQueryJSON.parse(res.getBody());
+  }
+
+  /**
+   * Query customers from QBO
+   * @param query SQL format query
+   * @return The wrapped json response from the QB callout
+   */
+  public static QBCustomerJSON queryCustomers(String query) {
+    HttpResponse res = calloutHelper('query', 'POST', query);
+    return QBCustomerJSON.parse(res.getBody());
   }
 
   /**

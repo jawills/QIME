@@ -1,3 +1,5 @@
+![QIME Logo](/images/qime-logo.svg)
+
 # QIME - Quickbooks Integrations Made Easy
 
 A free, open-source Salesforce -> Quickbooks Online integration.
@@ -6,8 +8,8 @@ A free, open-source Salesforce -> Quickbooks Online integration.
 
 Please use the following urls to install the latest version:
 
-- [Production](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000Hypq)
-- [Sandbox](https://test.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000Hypq)
+- [Production](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000HyqA)
+- [Sandbox](https://test.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000HyqA)
 
 ## Features
 
@@ -15,6 +17,7 @@ Please use the following urls to install the latest version:
 - Create invoices in Salesforce and sync to Quickbooks online
 - Sync Invoices from Quickbooks to Salesforce
 - Sync Payments from Quickbooks to Salesforce
+- Sync Customers from Quickbooks to Salesforce
 - Sync Invoice Terms from Quickbooks to Salesforce
 - Ready To Use Dashboards
 
@@ -24,7 +27,7 @@ Please use the following urls to install the latest version:
 
 ## Configure
 
-Please see my [write-up](https://g2technologies.com/blogs/learn/supercharge-your-salesforce-qbo-integration-today) to learn how to configure this inside your org. Additionally, you can see a visual tutorial on [youtube](https://youtu.be/ZRwzeuJRmPg).
+Please see my [write-up](https://www.1sync.co/integrate-quickbooks-salesforce) to learn how to configure this inside your org. Additionally, you can see a visual tutorial on [youtube](https://youtu.be/ZRwzeuJRmPg).
 
 ## Dashbaord
 
