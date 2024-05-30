@@ -88,6 +88,37 @@ During an initial setup, it is advised to sync all invoices from QuickBooks to S
 System.enqueueJob(new qime.QBInvoiceQueueable(0, 0, 50, 0));
 ```
 
+## Custom Fields
+
+Custom fields can be set based on your business needs. To create a custom field, use the [following](https://developer.intuit.com/app/developer/qbo/docs/workflows/create-custom-fields) guide to create the desired custom field in QB. At this time the maximum custom fields supported is 3.
+
+Now that the custom field is created, we need the custom field's id to link inside of Salesforce. The easiest way of retrieving the id is using Postman, and querying invoice endpoint. You will find a custom field definition like so:
+
+```json
+"CustomField": [
+    {
+        "DefinitionId": "1",
+        "Name": "Test 123",
+        "Type": "StringType",
+        "StringValue": "Val"
+    }
+],
+```
+
+Take the `DefinitionId` field, and go to Salesforce -> Setup -> Custom Metadata -> QIME Config -> Default, and paste it in the `Custom Field 1 Id` field.
+
+This can be done up to 3 times.
+
+To add your own data to these fields, I reccomend using a flow to copy the data from a custom field e.g. `Sales_Rep__c` to the `QB_Custom_Field_1__c`. Please keep in mind that at this time QB only allows strings, so you must convert your custom field value to a string.
+
+The following are the relationship between the Invoice Custom fields and metadata config:
+
+| Invoice Field          | Config Id Field        |
+| ---------------------- | ---------------------- |
+| `QB_Custom_Field_1__c` | `Custom_Field_1_Id__c` |
+| `QB_Custom_Field_2__c` | `Custom_Field_2_Id__c` |
+| `QB_Custom_Field_3__c` | `Custom_Field_3_Id__c` |
+
 ## Setting A Tax Id
 
 International companies need to specify a tax code, or will recieve the following error:

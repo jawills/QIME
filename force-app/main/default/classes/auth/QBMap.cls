@@ -71,7 +71,10 @@ public class QBMap {
         Use_Line_Item__c,
         QB_Product_Id__c,
         Use_Tax_Id__c,
-        Default_Tax_Id__c
+        Default_Tax_Id__c,
+        Custom_Field_1_Id__c,
+        Custom_Field_2_Id__c,
+        Custom_Field_3_Id__c
       FROM QIME_Config__mdt
       WHERE Label = 'Default'
     ];
@@ -137,7 +140,28 @@ public class QBMap {
 
     //map sales rep and po number (Not possible to add sales rep)
     invoiceObj.CustomField = new List<QBInvoiceJSON.CustomField>();
-
+    if (String.isNotBlank(config.custom_field_1_id__c)) {
+      QBInvoiceJSON.CustomField field = new QBInvoiceJSON.CustomField();
+      field.DefinitionId = config.custom_field_1_id__c;
+      field.StringValue = inv.QB_Custom_Field_1__c;
+      field.Type = 'StringType';
+      invoiceObj.CustomField.add(field);
+      System.debug(field);
+    } else {
+      System.debug('No value for custom field');
+    }
+    if (String.isNotBlank(config.custom_field_2_id__c)) {
+      QBInvoiceJSON.CustomField field = new QBInvoiceJSON.CustomField();
+      field.DefinitionId = config.custom_field_2_id__c;
+      field.StringValue = inv.QB_Custom_Field_2__c;
+      invoiceObj.CustomField.add(field);
+    }
+    if (String.isNotBlank(config.custom_field_3_id__c)) {
+      QBInvoiceJSON.CustomField field = new QBInvoiceJSON.CustomField();
+      field.DefinitionId = config.custom_field_3_id__c;
+      field.StringValue = inv.QB_Custom_Field_3__c;
+      invoiceObj.CustomField.add(field);
+    }
     //Initialize line items for invoice mapping
     invoiceObj.Line = new List<QBInvoiceJSON.Line>();
     if (config.Use_Line_Item__c) {
@@ -386,6 +410,13 @@ public class QBMap {
     List<Payment__c> payments = new List<Payment__c>();
     List<Invoice_Payment__c> inv_payments = new List<Invoice_Payment__c>();
     List<Invoice_Line_Item__c> ilis = new List<Invoice_Line_Item__c>();
+    List<qime__QIME_Config__mdt> configs = QIME.getConfig();
+    qime__QIME_Config__mdt config;
+    if (configs.size() > 0) {
+      config = configs[0];
+    } else {
+      throw new QBException('Could not find config');
+    }
     List<SObject> returnList = new List<SObject>();
     if (invQuery?.QueryResponse?.Invoice == null) {
       return new List<SObject>();
@@ -420,7 +451,7 @@ public class QBMap {
       inv.bcc_emails__c = invoice.BillEmailBcc?.Address;
       inv.cc_emails__c = invoice.BillEmailCc?.Address;
 
-      inv.Balance__c = invoice.Balance;
+      inv.Balance_Due__c = invoice.Balance;
       if (invoice?.TxnTaxDetail?.TotalTax != null) {
         inv.tax__c = invoice?.TxnTaxDetail?.TotalTax;
       }
@@ -445,6 +476,18 @@ public class QBMap {
           // Linked transactions have a unique id of inv id + payment id
           inv_payment.qb_Id__c = invoice.Id + '-' + txn.TxnId;
           inv_payments.add(inv_payment);
+        }
+      }
+
+      if (invoice?.CustomField.size() > 0) {
+        for (QBInvoiceQueryJSON.CustomField field : invoice?.CustomField) {
+          if (field.DefinitionId == config.custom_field_1_Id__c) {
+            inv.qb_custom_field_1__c = field.StringValue;
+          } else if (field.DefinitionId == config.custom_field_2_Id__c) {
+            inv.qb_custom_field_2__c = field.StringValue;
+          } else if (field.DefinitionId == config.custom_field_3_Id__c) {
+            inv.qb_custom_field_3__c = field.StringValue;
+          }
         }
       }
 
