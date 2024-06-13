@@ -208,7 +208,7 @@ public class QBMap {
         detail.Qty = ili.Quantity__c;
         detail.UnitPrice = ili.Unit_Price__c;
         detail.TaxCodeRef = new QBInvoiceJSON.TaxCodeRef();
-
+        detail.ServiceDate = ili.qime__Service_Date__c;
         if (config.Use_Tax_Id__c) {
           detail.TaxCodeRef.value = config.default_Tax_Id__c;
           if (String.isNotBlank(inv.Account__r.QB_Default_Tax_Code__c)) {

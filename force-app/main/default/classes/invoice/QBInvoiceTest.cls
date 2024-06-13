@@ -167,6 +167,7 @@ private class QBInvoiceTest {
         Product__r.QB_Description__c,
         QB_Id__c,
         Description__c,
+        Service_Date__c,
         Taxable__c
       FROM Invoice_Line_Item__c
       WHERE Invoice__c = :invId

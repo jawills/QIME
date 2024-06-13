@@ -93,6 +93,7 @@ public class QBInvoiceJSON {
     public Decimal UnitPrice;
     public TaxCodeRef TaxCodeRef;
     public TaxCode TaxCode;
+    public Date ServiceDate;
   }
 
   public class ItemRef {
