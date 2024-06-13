@@ -147,7 +147,7 @@ public class QBInvoiceHelper {
 
     if (
       String.isBlank(inv.Opportunity__r.Account.QB_Id__c) &&
-      checkCustomerCreate(config)
+      !checkCustomerCreate(config)
     ) {
       throw new QBException('Cannot create an invoice without a customer id');
     } else {
