@@ -87,7 +87,8 @@ public class OpportunityTriggerHandler {
         TotalPrice,
         SortOrder,
         Product2Id,
-        ServiceDate
+        ServiceDate,
+        Description
       FROM OpportunityLineItem
       WHERE OpportunityId IN :new List<Id>(oppIdSet)
     ];

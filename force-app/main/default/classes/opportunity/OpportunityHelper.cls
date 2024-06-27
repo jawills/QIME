@@ -35,6 +35,7 @@ public with sharing class OpportunityHelper {
       ili.Product__c = oli.Product2Id;
       ili.Opportunity_Product__c = oli.Id;
       ili.qime__Service_Date__c = oli.ServiceDate;
+      ili.qime__Description__c = oli.Description;
       //Seperate Id is useful to check for upsert / delete
       ili.qime__Opportunity_Product_Id__c = oli.Id;
       ili.OLI_Id__c = oli.Id;
@@ -63,6 +64,7 @@ public with sharing class OpportunityHelper {
             TotalPrice,
             ListPrice,
             SortOrder,
+            Description,
             ServiceDate
           FROM OpportunityLineItems
         ),
