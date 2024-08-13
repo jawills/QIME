@@ -67,6 +67,11 @@ public class QBCallout {
         'An authorization error ocurred. Please ensure QIME is configured correctly before syncing'
       );
     }
+    if (res.getStatusCode() == 301) {
+      throw new QBException(
+        'URL permanently moved. Please ensure the correct base url is used in the named credential.'
+      );
+    }
     System.debug(res.getBody());
     handleResponseError(res.getBody());
     return res;

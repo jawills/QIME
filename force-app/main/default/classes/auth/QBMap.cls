@@ -271,6 +271,10 @@ public class QBMap {
 
     if (json.QueryResponse.Invoice.size() > 0) {
       inv.balance_Due__c = json.QueryResponse.Invoice[0].Balance;
+      System.debug(json.QueryResponse.Invoice[0].TxnDate);
+      inv.Transaction_Date__c = Date.valueOf(
+        json.QueryResponse.Invoice[0].TxnDate
+      );
       for (QBInvoiceQueryJSON.Invoice invoice : json.QueryResponse.Invoice) {
         for (QBInvoiceQueryJSON.LinkedTxn txn : invoice.LinkedTxn) {
           Payment__c p = new Payment__c();
@@ -359,6 +363,7 @@ public class QBMap {
     inv.balance_Due__c = json.Invoice.Balance;
     inv.Document_Number__c = json.Invoice.DocNumber;
     inv.Total__c = json.Invoice.TotalAmt;
+    inv.Transaction_Date__c = Date.valueOf(json.Invoice.TxnDate);
     if (json.Invoice?.TxnTaxDetail?.TotalTax != null) {
       inv.tax__c = json.Invoice?.TxnTaxDetail?.TotalTax;
     }
