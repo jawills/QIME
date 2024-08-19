@@ -19,6 +19,7 @@ Please use the following urls to install the latest version:
 - Sync Payments from Quickbooks to Salesforce
 - Sync Customers from Quickbooks to Salesforce
 - Sync Invoice Terms from Quickbooks to Salesforce
+- Sync Sales Receipts from Quickbooks to Salesforce
 - Ready To Use Dashboards
 
 ## Requirements
@@ -27,7 +28,7 @@ Please use the following urls to install the latest version:
 
 ## Configure
 
-Please see my [write-up](https://www.1sync.co/integrate-quickbooks-salesforce) to learn how to configure this inside your org. Additionally, you can see a visual tutorial on [youtube](https://youtu.be/ZRwzeuJRmPg).
+Please check out the [documentation](https://qime.1sync.co) to learn how to configure this inside your org. Additionally, you can see a visual tutorial on [youtube](https://youtu.be/ZRwzeuJRmPg).
 
 ## Dashbaord
 

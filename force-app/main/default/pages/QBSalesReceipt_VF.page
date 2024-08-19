@@ -1,0 +1,2 @@
+<apex:page standardcontroller="Opportunity" extensions="QBSalesReceiptController" action="{!syncQB}">
+</apex:page>

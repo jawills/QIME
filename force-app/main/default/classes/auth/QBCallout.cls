@@ -259,4 +259,17 @@ public class QBCallout {
     HttpResponse res = calloutHelper('item', 'POST', itemJSON);
     return QBItemResponseJSON.parse(res.getBody());
   }
+
+  public static QBSalesReceiptQueryJSON getSalesReceiptCount() {
+    String query = 'select count(*) from SalesReceipt';
+    return QBSalesReceiptQueryJSON.parse(
+      calloutHelper('query', 'POST', query).getBody()
+    );
+  }
+
+  public static QBSalesReceiptQueryJSON getSalesReceipts(String query) {
+    return QBSalesReceiptQueryJSON.parse(
+      calloutHelper('query', 'POST', query).getBody()
+    );
+  }
 }

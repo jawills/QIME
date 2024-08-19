@@ -407,6 +407,15 @@ public class QBMap {
   }
 
   /**
+   * Get the count from the query response
+   * @param countJSON The response data from a count(*) query
+   * @return The count in QB for the given object
+   */
+  public static Integer getCount(QBSalesReceiptQueryJSON countJSON) {
+    return countJSON.QueryResponse.totalCount;
+  }
+
+  /**
    * Map invoice query data into invoices, payments, and invoice line item
    * @param invQuery The response data from invoice query
    * @return List of Invoice__c, Payment__c, Invoice_Payment__c, and Invoice_Line_Item__c
