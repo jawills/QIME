@@ -20,19 +20,19 @@ This configuration data is stored in the Custom Metadata `QIME Parameter`
 
 We can set the stage name opportunities are created with under the `Sales Receipt Stage` metadata type. The default stage is `Closed Won`.
 
-![Sales Receipt Stage Mapping](/docs/src/assets/sales-receipts/stage-name.png)
+![Sales Receipt Stage Mapping](../../../assets/sales-receipts/stage-name.png)
 
 ### Sales Receipt Pricebook
 
 We can set the pricebook opportunities are created with under the `Sales Receipt Pricebook` metadata type. This **must** be configured.
 
-![Sales Receipt Pricebook](/docs/src/assets/sales-receipts/pricebook.png)
+![Sales Receipt Pricebook](../../../assets/sales-receipts/pricebook.png)
 
 ### Sales Receipt Lookback
 
 We can set the amount of hours that sales receipts are queried with under the `Sales Receipt Hours Lookback` metadata type. The deafult is **24** hours.
 
-![Sales Receipt Pricebook](/docs/src/assets/sales-receipts/pricebook.png)
+![Sales Receipt Pricebook](../../../assets/sales-receipts/pricebook.png)
 
 ## Sales Receipt Mapping
 
