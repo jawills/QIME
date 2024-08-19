@@ -1,9 +1,7 @@
 ---
 title: Payment
-description: A reference page in my new Starlight docs site.
+description: How to sync payments from Quickbooks to Salesforce.
 ---
-
-
 
 ## Schedule Payment Sync From QuickBooks to Salesforce
 
@@ -18,7 +16,7 @@ Payments need to be synced to Salesforce to not only get payment status and bala
 | Id               | QB ID            | `qime__qb_Id__c`            |
 | Sync Token       | QB SyncToken     | `qime__qb_SyncToken__c`     |
 
-To schedule payments syncing, perform the following:
+To schedule payments syncing, use the `scheduled jobs` tab in the `QIME` app. To manually schedule, perform the following:
 
 1. Open the `Developer Console`
 2. Run the following code snippet

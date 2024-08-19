@@ -1,6 +1,6 @@
 ---
 title: Items
-description: A reference page in my new Starlight docs site.
+description: How to sync items from Quickbooks to products in Salesforce.
 ---
 
 ## Syncing Products

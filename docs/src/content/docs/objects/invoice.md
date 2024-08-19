@@ -1,6 +1,6 @@
 ---
 title: Invoice
-description: A reference page in my new Starlight docs site.
+description: How to sync invoices from Quickbooks to Salesforce.
 ---
 
 ## Syncing Invoices
@@ -66,7 +66,7 @@ Syncing invoices from QuickBooks to Salesforce is essential for any QuickBooks i
 
 ## Schedule Invoice Sync From QuickBooks -> Salesforce
 
-Invoices can be brought over hourly. To schedule Invoices syncing, perform the following:
+Invoices can be brought over hourly. To schedule Invoices syncing, use the `scheduled jobs` tab in the `QIME` app. To manually schedule, perform the following:
 
 1. Open the `Developer Console`
 2. Run the following code snippet
