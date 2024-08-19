@@ -472,12 +472,18 @@ public class QBMap {
       if (String.isNotBlank(invoice.SalesTermRef?.name)) {
         inv.Terms__c = invoice.SalesTermRef?.name;
       }
-
+      Boolean hasPayment = false;
+      Boolean hasCredit = false;
       if (invoice?.LinkedTxn.size() > 0) {
         for (QBInvoiceQueryJSON.LinkedTxn txn : invoice.LinkedTxn) {
+          //@TODO figure out why this doesnt work
+          if (txn.TxnType == 'Credit') {
+            hasCredit = true;
+          }
           if (txn.TxnType != 'Payment') {
             continue;
           }
+          hasPayment = true;
           Payment__c p = new Payment__c();
           p.qb_id__c = txn.TxnId;
           payments.add(p);
@@ -492,6 +498,9 @@ public class QBMap {
           inv_payments.add(inv_payment);
         }
       }
+
+      inv.Has_Payment__c = hasPayment;
+      inv.Has_Credit__c = hasCredit;
 
       if (invoice?.CustomField.size() > 0) {
         for (QBInvoiceQueryJSON.CustomField field : invoice?.CustomField) {

@@ -161,7 +161,7 @@ public class QBInvoiceHelper {
       customerId
     );
     QBInvoiceResponseJSON resJSON = QBCallout.createInvoice(invoiceJson);
-
+    System.debug(resJSON);
     List<SObject> returnList = QBMap.mapInvoiceData(
       inv,
       inv.Invoice_Line_Items__r,

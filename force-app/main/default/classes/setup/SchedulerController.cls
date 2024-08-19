@@ -3,6 +3,7 @@ public with sharing class SchedulerController {
   public static final String PAYMENT_JOB_NAME = 'QB - Payment XX:05';
   public static final String TERM_JOB_NAME = 'QB - TERM XX:10';
   public static final String CUSTOMER_JOB_NAME = 'QB - Customr XX:30';
+  public static final String SALES_RECEIPT_JOB_NAME = 'QB - Sales Receipt XX:15';
 
   @AuraEnabled
   public static ScheduledJobs getScheduledJobs() {
@@ -11,6 +12,7 @@ public with sharing class SchedulerController {
     jobs.paymentJob = getPaymentJob();
     jobs.termJob = getTermJob();
     jobs.customerJob = getCustomerJob();
+    jobs.salesReceiptJob = getSalesReceiptJob();
     return jobs;
   }
 
@@ -50,6 +52,15 @@ public with sharing class SchedulerController {
     return customerJob.size() > 0;
   }
 
+  private static Boolean getSalesReceiptJob() {
+    List<CronTrigger> salesReceiptJob = [
+      SELECT Id, CronJobDetail.Name, CronJobDetail.Id, State
+      FROM CronTrigger
+      WHERE CronJobDetail.Name = :SALES_RECEIPT_JOB_NAME
+    ];
+    return salesReceiptJob.size() > 0;
+  }
+
   @AuraEnabled
   public static void scheduleInvoiceJob() {
     System.schedule(INVOICE_JOB_NAME, '0 0 * * * ?', new QBInvoiceBatch());
@@ -71,6 +82,15 @@ public with sharing class SchedulerController {
   }
 
   @AuraEnabled
+  public static void scheduleSalesReceiptJob() {
+    System.schedule(
+      SALES_RECEIPT_JOB_NAME,
+      '0 15 * * * ?',
+      new QBCustomerBatch()
+    );
+  }
+
+  @AuraEnabled
   public static void unscheduleInvoiceJob() {
     unscheduleJob(INVOICE_JOB_NAME);
   }
@@ -88,6 +108,11 @@ public with sharing class SchedulerController {
   @AuraEnabled
   public static void unscheduleCustomerJob() {
     unscheduleJob(CUSTOMER_JOB_NAME);
+  }
+
+  @AuraEnabled
+  public static void unscheduleSalesReceiptJob() {
+    unscheduleJob(SALES_RECEIPT_JOB_NAME);
   }
 
   private static void unscheduleJob(String jobName) {
@@ -111,5 +136,7 @@ public with sharing class SchedulerController {
     public Boolean termJob { get; set; }
     @AuraEnabled
     public Boolean customerJob { get; set; }
+    @AuraEnabled
+    public Boolean salesReceiptJob { get; set; }
   }
 }
