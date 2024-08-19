@@ -8,8 +8,8 @@ A free, open-source Salesforce -> Quickbooks Online integration.
 
 Please use the following urls to install the latest version:
 
-- [Production](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000Hyxq)
-- [Sandbox](https://test.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000Hyxq)
+- [Production](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000HyyA)
+- [Sandbox](https://test.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000HyyA)
 
 ## Features
 

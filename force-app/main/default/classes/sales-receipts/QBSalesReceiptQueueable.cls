@@ -1,9 +1,9 @@
-public class QBSalesReceiptQueueable implements Queueable, Database.AllowsCallouts {
+global class QBSalesReceiptQueueable implements Queueable, Database.AllowsCallouts {
   Integer currentCount;
   Integer totalCount;
   Integer iteratorSize;
   Integer stackDepth;
-  public QBSalesReceiptQueueable(
+  global QBSalesReceiptQueueable(
     Integer currentCount,
     Integer totalCount,
     Integer iteratorSize,
@@ -15,7 +15,7 @@ public class QBSalesReceiptQueueable implements Queueable, Database.AllowsCallou
     this.stackDepth = stackDepth;
   }
 
-  public void execute(QueueableContext context) {
+  global void execute(QueueableContext context) {
     if (totalCount == 0) {
       totalCount = QBMap.getCount(QBCallout.getSalesReceiptCount());
     }
