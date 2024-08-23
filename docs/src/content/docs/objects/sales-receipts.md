@@ -80,7 +80,7 @@ During an initial setup, it is advised to sync all sales receipts from QuickBook
 2. Run the following code snippet
 
 ```apex
-System.enqueueJob(new qime.QBInvoiceQueueable(0, 0, 50, 0));
+System.enqueueJob(new qime.QBSalesReceiptQueueable(0, 0, 50, 0));
 ```
 
 ## Scheduling Sales Receipts Sync
