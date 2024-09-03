@@ -312,6 +312,9 @@ public class QBMap {
     for (QBCustomerJSON.Customer cus : json.QueryResponse.Customer) {
       Account acc = new Account();
       acc.Name = cus.CompanyName;
+      if (String.isBlank(acc.Name)) {
+        acc.Name = cus.FullyQualifiedName;
+      }
       acc.qime__QB_Id__c = cus.Id;
       acc.qime__QB_Synctoken__c = cus.SyncToken;
 

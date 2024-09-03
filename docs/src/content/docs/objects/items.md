@@ -64,7 +64,7 @@ We can also pull all the products from QB to SF.
 Run the following code to perform this:
 
 ```java
-System.enqueueJob(new QBItemQueueable(0, 0, 50, 0));
+System.enqueueJob(new qime.QBItemQueueable(0, 0, 50, 0));
 ```
 
 ### Item -> Product Mapping
