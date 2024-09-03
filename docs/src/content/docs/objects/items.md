@@ -57,6 +57,28 @@ This also assumes that SF will overwrite data for every field except the followi
 | Qty On Hand      | Qty On Hand      | `Product2.qime__Qty_On_Hand__c`    |
 | Purchase Cost    | Purchase Cost    | `Product2.qime__Purchase_Cost__c`  |
 
+## Pulling Products From QB to SF
+
+We can also pull all the products from QB to SF.
+
+Run the following code to perform this:
+
+```java
+System.enqueueJob(new QBItemQueueable(0, 0, 50, 0));
+```
+
+### Item -> Product Mapping
+
+| QuickBooks Field | Salesforce Label | Salesforce API Name                |
+| ---------------- | ---------------- | ---------------------------------- |
+| Id               | QB Id            | `Product2.qime__QB_Id__c`          |
+| Name             | Name             | `Product2.Name`                    |
+| Type             | QB Type          | `Product2.qime__QB_Type__c`        |
+| Income Account   | Income Account   | `Product2.qime__Income_Account__c` |
+| Synctoken        | QB Synctoken     | `Product2.qime__QB_SyncToken__c`   |
+| Qty On Hand      | Qty On Hand      | `Product2.qime__Qty_On_Hand__c`    |
+| Purchase Cost    | Purchase Cost    | `Product2.qime__Purchase_Cost__c`  |
+
 ## Using only a 'Services' Line Item
 
 Some companies do not want multiple line items on their invoices, and just use a simple `Services` product on the invoice. If you are looking to sync invoices with only a services line item, perform the following to have this configured:
