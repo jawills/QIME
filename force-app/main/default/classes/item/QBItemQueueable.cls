@@ -1,9 +1,10 @@
-global class QBCustomerQueueable implements Queueable, Database.AllowsCallouts {
+global class QBItemQueueable implements Queueable, Database.AllowsCallouts {
   Integer currentCount;
   Integer totalCount;
   Integer iteratorSize;
   Integer stackDepth;
-  global QBCustomerQueueable(
+
+  global QBItemQueueable(
     Integer currentCount,
     Integer totalCount,
     Integer iteratorSize,
@@ -17,25 +18,25 @@ global class QBCustomerQueueable implements Queueable, Database.AllowsCallouts {
 
   global void execute(QueueableContext context) {
     if (totalCount == 0) {
-      totalCount = QBMap.getCount(QBCallout.getCustomerCount());
+      totalCount = QBMap.getCount(QBCallout.getItemCount());
     }
     String query =
-      'select * from Customer MAXRESULTS ' +
+      'select * from Item MAXRESULTS ' +
       String.valueOf(this.iteratorSize) +
       ' STARTPOSITION ' +
       String.valueOf(this.currentCount);
-    QBCustomerJSON res = QBCallout.queryCustomers(query);
-    List<Account> returnList = QBMap.mapCustomersToAccounts(res);
+    QBItemQueryJSON res = QBCallout.queryItems(query);
+    List<Product2> returnList = QBMap.mapItemsToProducts(res);
 
-    QIMEUtil.printResult(Database.upsert(returnList, Account.QB_Id__c, false));
+    QIMEUtil.printResult(Database.upsert(returnList, Product2.QB_Id__c, false));
     this.currentCount += this.iteratorSize;
     if (this.currentCount < this.totalCount) {
       System.enqueueJob(
-        new QBCustomerQueueable(
+        new QBItemQueueable(
           currentCount,
           totalCount,
           iteratorSize,
-          stackDepth++
+          this.stackDepth++
         )
       );
     }

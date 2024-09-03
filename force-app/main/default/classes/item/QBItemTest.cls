@@ -6,6 +6,9 @@ public class QBItemTest {
       if (req.getEndpoint().contains('/item')) {
         res.setBody(QBItemResponseJSON_Test.json);
         res.setStatusCode(200);
+      } else if (req.getEndpoint().contains('query')) {
+        res.setBody(QBItemQueryJSON_Test.json);
+        res.setStatusCode(200);
       } else {
         System.assert(false, 'unexpected endpoint ' + req.getEndpoint());
         return null;
@@ -53,6 +56,23 @@ public class QBItemTest {
     Product2 p = [SELECT Id, QB_Id__c FROM Product2 WHERE Name = 'Test Prod'];
 
     System.assert(p.qime__QB_Id__c != null, 'QB Id never set.');
+  }
+
+  @isTest(seeAllData=false)
+  static void testQueueable() {
+    Test.setMock(HttpCalloutMock.class, new Mock());
+    QBItemQueueable queueable = new QBItemQueueable(0, 0, 50, 0);
+    Test.startTest();
+    System.enqueueJob(queueable);
+    Test.stopTest();
+
+    List<Product2> prods = [
+      SELECT Id, QB_Id__c
+      FROM Product2
+      WHERE qime__QB_Id__c != NULL
+    ];
+
+    System.assert(prods.size() > 0, 'Products never created');
   }
 
   @isTest(seeAllData=false)

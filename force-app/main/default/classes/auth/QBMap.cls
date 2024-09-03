@@ -644,6 +644,28 @@ public class QBMap {
   }
 
   /**
+   * Map items to product2
+   * @param itemsQuery query of terms from QB
+   * @return List of product2 for upsert
+   */
+  public static List<Product2> mapItemsToProducts(QBItemQueryJSON itemQuery) {
+    List<Product2> prods = new List<Product2>();
+    for (QBItemQueryJSON.item item : itemQuery.QueryResponse.Item) {
+      Product2 p = new Product2();
+      p.name = item.Name;
+      p.QB_ID__c = item.id;
+      p.QB_Description__c = item.Description;
+      p.IsActive = item.Active;
+      p.QB_SyncToken__c = item.SyncToken;
+      p.Income_Account__c = item?.IncomeAccountRef?.value;
+      p.QB_Type__c = item.Type;
+      prods.add(p);
+    }
+
+    return prods;
+  }
+
+  /**
    * Check if string is null and return empty string
    * @param value string to check if null
    * @return string value if not null otherwise null

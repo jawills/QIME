@@ -178,6 +178,19 @@ public class QBCallout {
   }
 
   /**
+   * Get Item count from QBO
+   * @return The wrapped json response from the QB callout
+   */
+  public static QBQueryResponseCountJSON getItemCount() {
+    HttpResponse res = calloutHelper(
+      'query',
+      'POST',
+      'select count(*) from Item'
+    );
+    return QBQueryResponseCountJSON.parse(res.getBody());
+  }
+
+  /**
    * Get Income Account from QBO
    * @return The wrapped json response from the QB callout
    */
@@ -239,6 +252,16 @@ public class QBCallout {
   public static QBPaymentQueryJSON queryPayments(String query) {
     HttpResponse res = calloutHelper('query', 'POST', query);
     return QBPaymentQueryJSON.parse(res.getBody());
+  }
+
+  /**
+   * Query items from QBO
+   * @param query SQL format query
+   * @return The wrapped json response from the QB callout
+   */
+  public static QBItemQueryJSON queryItems(String query) {
+    HttpResponse res = calloutHelper('query', 'POST', query);
+    return QBItemQueryJSON.parse(res.getBody());
   }
 
   /**

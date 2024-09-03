@@ -8,8 +8,8 @@ A free, open-source Salesforce -> Quickbooks Online integration.
 
 Please use the following urls to install the latest version:
 
-- [Production](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000HyyA)
-- [Sandbox](https://test.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000HyyA)
+- [Production](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000HyyP)
+- [Sandbox](https://test.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000HyyP)
 
 ## Features
 
@@ -18,6 +18,7 @@ Please use the following urls to install the latest version:
 - Sync Invoices from Quickbooks to Salesforce
 - Sync Payments from Quickbooks to Salesforce
 - Sync Customers from Quickbooks to Salesforce
+- Sync Items from Quickbooks to Salesforce
 - Sync Invoice Terms from Quickbooks to Salesforce
 - Sync Sales Receipts from Quickbooks to Salesforce
 - Ready To Use Dashboards
