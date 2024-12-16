@@ -32,7 +32,7 @@ We can set the pricebook opportunities are created with under the `Sales Receipt
 
 We can set the amount of hours that sales receipts are queried with under the `Sales Receipt Hours Lookback` metadata type. The deafult is **24** hours.
 
-![Sales Receipt Pricebook](../../../assets/sales-receipts/pricebook.png)
+![Sales Receipt Lookback](../../../assets/sales-receipts/sr-lookback.png)
 
 ## Sales Receipt Mapping
 
