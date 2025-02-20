@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Unit_Price__c</fullName>
     <deprecated>false</deprecated>
-    <externalId>false</externalId>
     <label>Unit Price</label>
     <precision>18</precision>
     <required>false</required>

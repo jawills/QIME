@@ -3,7 +3,6 @@
     <fullName>Use_Line_Item__c</fullName>
     <defaultValue>false</defaultValue>
     <deprecated>false</deprecated>
-    <externalId>false</externalId>
     <fieldManageability>SubscriberControlled</fieldManageability>
     <label>Use Line Item</label>
     <type>Checkbox</type>

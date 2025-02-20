@@ -2,7 +2,6 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Message_On_Statement__c</fullName>
     <deprecated>false</deprecated>
-    <externalId>false</externalId>
     <label>Message On Statement</label>
     <length>32768</length>
     <trackHistory>false</trackHistory>

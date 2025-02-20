@@ -86,7 +86,7 @@ public with sharing class SchedulerController {
     System.schedule(
       SALES_RECEIPT_JOB_NAME,
       '0 15 * * * ?',
-      new QBCustomerBatch()
+      new QBSalesReceiptBatch()
     );
   }
 

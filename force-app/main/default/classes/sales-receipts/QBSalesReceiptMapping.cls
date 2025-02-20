@@ -79,6 +79,8 @@ public class QBSalesReceiptMapping {
             oli.PricebookEntryId = pbeMap.get(
               line_item?.SalesItemLineDetail?.ItemRef?.value
             );
+          } else {
+            System.debug(line_item?.SalesItemLineDetail?.ItemRef?.value);
           }
           oli.class__c = line_item?.SalesItemLineDetail?.ClassRef?.name;
 

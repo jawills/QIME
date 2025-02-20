@@ -3,7 +3,6 @@
     <fullName>Link_By_Memo__c</fullName>
     <defaultValue>false</defaultValue>
     <deprecated>false</deprecated>
-    <externalId>false</externalId>
     <fieldManageability>SubscriberControlled</fieldManageability>
     <label>Link By Memo</label>
     <type>Checkbox</type>

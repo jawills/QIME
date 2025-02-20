@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Payment_Status__c</fullName>
+    <deprecated>false</deprecated>
     <externalId>false</externalId>
-    <formula>IF( AND(Balance__c = 0, Total__c = 0) , &apos;Voided&apos;, IF(Balance__c = 0, &quot;Paid&quot;, IF(Balance__c = Total__c, &quot;Not Paid&quot;, &quot;Partially Paid&quot; )))</formula>
+    <formula>IF(  ISBLANK(QB_Id__c)  , &quot;Not Synced With QB&quot;,  IF( AND( Balance_Due__c  = 0, Total__c = 0, NOT( Has_Payment__c )) , &apos;Voided&apos;, IF(Balance_Due__c = 0, &quot;Paid&quot;, IF(Balance_Due__c = Total__c, &quot;Not Paid&quot;, &quot;Partially Paid&quot; ))))</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Payment Status</label>
     <required>false</required>

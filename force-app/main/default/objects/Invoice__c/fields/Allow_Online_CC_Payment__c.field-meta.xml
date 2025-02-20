@@ -3,7 +3,6 @@
     <fullName>Allow_Online_CC_Payment__c</fullName>
     <defaultValue>true</defaultValue>
     <deprecated>false</deprecated>
-    <externalId>false</externalId>
     <label>Allow Online CC Payment</label>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

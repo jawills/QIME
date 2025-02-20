@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Use_Tax_Id__c</fullName>
+    <defaultValue>false</defaultValue>
+    <deprecated>false</deprecated>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>Specify the tax code. This is for NON-US QB companies.</inlineHelpText>
+    <label>Use Tax Id</label>
+    <type>Checkbox</type>
+</CustomField>

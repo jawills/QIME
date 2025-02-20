@@ -3,7 +3,6 @@
     <fullName>Taxable__c</fullName>
     <defaultValue>true</defaultValue>
     <deprecated>false</deprecated>
-    <externalId>false</externalId>
     <label>Taxable</label>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

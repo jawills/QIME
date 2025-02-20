@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Aging_Category__c</fullName>
+    <deprecated>false</deprecated>
     <externalId>false</externalId>
     <formula>IF( Aging__c &lt; 1, &quot;Not due yet&quot;,
 IF( Aging__c &lt; 31, &quot;0-30 Days&quot;,
