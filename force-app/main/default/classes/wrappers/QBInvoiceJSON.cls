@@ -62,6 +62,8 @@ public class QBInvoiceJSON {
   public BillAddr BillAddr;
   public BillAddr ShipAddr;
   public EmailAddress BillEmail;
+  public EmailAddress BillEmailCc;
+  public EmailAddress BillEmailBcc;
   public MemoRef CustomerMemo;
   public String EmailStatus;
   public String DocNumber;

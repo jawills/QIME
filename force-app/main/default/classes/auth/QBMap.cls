@@ -95,9 +95,21 @@ public class QBMap {
       invoiceObj.DocNumber = invNumber;
     }
     invoiceObj.EmailStatus = 'NotSet';
+
+    // Email
     QBInvoiceJSON.EmailAddress email = new QBInvoiceJSON.EmailAddress();
-    email.Address = inv.email__c;
+    email.Address = inv.emails__c;
     invoiceObj.BillEmail = email;
+
+    // CC
+    QBInvoiceJSON.EmailAddress ccEmail = new QBInvoiceJSON.EmailAddress();
+    ccEmail.Address = inv.cc_emails__c;
+    invoiceObj.BillEmailCc = ccEmail;
+
+    //Bcc
+    QBInvoiceJSON.EmailAddress bccEmail = new QBInvoiceJSON.EmailAddress();
+    bccEmail.Address = inv.bcc_emails__c;
+    invoiceObj.BillEmailBcc = bccEmail;
 
     QBInvoiceJSON.CustomerRef customerRef = new QBInvoiceJSON.CustomerRef();
     customerRef.value = customerId;
@@ -144,6 +156,20 @@ public class QBMap {
       QBInvoiceJSON.CustomField field = new QBInvoiceJSON.CustomField();
       field.DefinitionId = config.custom_field_1_id__c;
       field.StringValue = inv.QB_Custom_Field_1__c;
+      field.Type = 'StringType';
+      invoiceObj.CustomField.add(field);
+      System.debug(field);
+    } else if (String.isNotBlank(config.custom_field_2_id__c)) {
+      QBInvoiceJSON.CustomField field = new QBInvoiceJSON.CustomField();
+      field.DefinitionId = config.custom_field_2_id__c;
+      field.StringValue = inv.QB_Custom_Field_2__c;
+      field.Type = 'StringType';
+      invoiceObj.CustomField.add(field);
+      System.debug(field);
+    } else if (String.isNotBlank(config.custom_field_3_id__c)) {
+      QBInvoiceJSON.CustomField field = new QBInvoiceJSON.CustomField();
+      field.DefinitionId = config.custom_field_3_id__c;
+      field.StringValue = inv.QB_Custom_Field_3__c;
       field.Type = 'StringType';
       invoiceObj.CustomField.add(field);
       System.debug(field);
