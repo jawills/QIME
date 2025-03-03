@@ -158,34 +158,19 @@ public class QBMap {
       field.StringValue = inv.QB_Custom_Field_1__c;
       field.Type = 'StringType';
       invoiceObj.CustomField.add(field);
-      System.debug(field);
-    } else if (String.isNotBlank(config.custom_field_2_id__c)) {
-      QBInvoiceJSON.CustomField field = new QBInvoiceJSON.CustomField();
-      field.DefinitionId = config.custom_field_2_id__c;
-      field.StringValue = inv.QB_Custom_Field_2__c;
-      field.Type = 'StringType';
-      invoiceObj.CustomField.add(field);
-      System.debug(field);
-    } else if (String.isNotBlank(config.custom_field_3_id__c)) {
-      QBInvoiceJSON.CustomField field = new QBInvoiceJSON.CustomField();
-      field.DefinitionId = config.custom_field_3_id__c;
-      field.StringValue = inv.QB_Custom_Field_3__c;
-      field.Type = 'StringType';
-      invoiceObj.CustomField.add(field);
-      System.debug(field);
-    } else {
-      System.debug('No value for custom field');
     }
     if (String.isNotBlank(config.custom_field_2_id__c)) {
       QBInvoiceJSON.CustomField field = new QBInvoiceJSON.CustomField();
       field.DefinitionId = config.custom_field_2_id__c;
       field.StringValue = inv.QB_Custom_Field_2__c;
+      field.Type = 'StringType';
       invoiceObj.CustomField.add(field);
     }
     if (String.isNotBlank(config.custom_field_3_id__c)) {
       QBInvoiceJSON.CustomField field = new QBInvoiceJSON.CustomField();
       field.DefinitionId = config.custom_field_3_id__c;
       field.StringValue = inv.QB_Custom_Field_3__c;
+      field.Type = 'StringType';
       invoiceObj.CustomField.add(field);
     }
     //Initialize line items for invoice mapping
