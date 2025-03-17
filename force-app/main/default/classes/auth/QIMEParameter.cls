@@ -57,6 +57,20 @@ public class QIMEParameter {
     private set;
   }
 
+  /**
+   * @description Indicates what customers will be created as.
+   *              Controlled by the custom metadata record `QIME_Parameter.Customer_Hours_Lookback`, or `24` as the default
+   */
+  public static final Integer CUSTOMER_HOURS_LOOKBACK {
+    get {
+      if (CUSTOMER_HOURS_LOOKBACK == null) {
+        CUSTOMER_HOURS_LOOKBACK = getInteger('Customer_Hours_Lookback', 24);
+      }
+      return CUSTOMER_HOURS_LOOKBACK;
+    }
+    private set;
+  }
+
   private static final Map<String, QIME_Parameter__mdt> DEVELOPER_NAME_TO_RECORD {
     get {
       if (DEVELOPER_NAME_TO_RECORD == null) {

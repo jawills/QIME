@@ -103,6 +103,8 @@ public class QBCallout {
     qime__QIME_Config__mdt config = qime__QIME_Config__mdt.getInstance(
       'Default'
     );
+    // Will cause a 500 error if no id, no email, and config set to false.
+    // Need a good way of error handling but will throw an error for now.
     if (String.isNotBlank(a.qime__QB_Id__c)) {
       query = 'select * from customer where id = \'' + a.QB_Id__c + '\'';
     } else if (config.qime__Link_Customer_By_Name__c) {
@@ -112,6 +114,8 @@ public class QBCallout {
         'select * from customer where PrimaryEmailAddr = \'' +
         a.primary_email__c +
         '\'';
+    } else {
+      return new QBCustomerJSON();
     }
     HttpResponse res = calloutHelper('query', 'POST', query);
     return QBCustomerJSON.parse(res.getBody());

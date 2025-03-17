@@ -12,7 +12,7 @@ global class QBCustomerBatch implements Database.Batchable<sobject>, Database.Al
       'select * from Customer WHERE Metadata.LastUpdatedTime > \'' +
       String.valueOf(
         Datetime.now()
-          .addhours(-1)
+          .addhours(QIMEParameter.CUSTOMER_HOURS_LOOKBACK)
           .formatGMT('yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'')
       ) +
       '\'';
