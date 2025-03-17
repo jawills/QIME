@@ -98,11 +98,6 @@ To configure the Named credential, go to `Setup` -> `Named Credentials` and go t
 - Authentication Flow Type: `Browser Flow`
 - Authentication Provider: `QBAuthProvider`
 
-From here, we can map the permissions to allow or restrict users to run the QuickBooks code. To configure for all users, create a new `Permission Set Mapping` with the following properties:
-
-- Permission Set: `QBO User`
-- Sequence Number: `1`
-- Identity Type: `Named Principal`
 
 Next, the named credential needs to be created, which is the middleware that allows the apex code to access the authorization to QuickBooks. To configure this, go back to the `Named Credential` tab and create a new record with the following properties:
 
@@ -115,6 +110,24 @@ Next, the named credential needs to be created, which is the middleware that all
 - Allowed Namespaces: `QIME`
 
 \* If using a QuickBooks sandbox environment, user the following URL: `https://sandbox-quickbooks.api.intuit.com`
+
+
+Now, we want to setup the `Principal` on the external credential. This will allow us to grant specific access to QB based on a permission set.
+
+Create a new `Principal` with the following settings:
+- Parameter Name: `QB Principal`
+- Identity Type: `Named Principal`
+
+Save the record, then go to the `Actions` menu on the Principal and click `Authenticate`. This will prompt a login screen to authenticate QB.
+
+**The connection will expire in 1 hour if no additional batch jobs are setup. Continue with the setup to ensure that the refresh token does not expire.**
+
+Now we need to assign permission sets to any user who will authenticate with QB. Go to `Permission Sets` and clone the `QBO User` permission set.
+
+Inside the cloned permission set:
+1. Go to `External Credential Principal Access`
+2. Edit and add the `QB_External_Credential - QB Principal`.
+3. Save and assign to target users.
 
 With this, all the configuration is done to authenticate with QuickBooks! All that needs to be performed is to authenticate with QuickBooks. To perform this, go to the `QB External Credential`, and scroll to the `Permission Set Mappings`, and under the `Actions` column for the `QBO User` permission set mapping, click the arrow to see more options, and press `Authenticate`. This will initiate the authentication flow, and store the credentials securely within Salesforce.
 
