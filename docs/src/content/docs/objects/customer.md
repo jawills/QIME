@@ -71,7 +71,7 @@ During an initial setup, you can bring all customers from QuickBooks to Salesfor
 System.enqueueJob(new qime.QBCustomerQueueable(0, 0, 50, 0));
 ```
 
-**Please keep in mind that this will overwrite yout exsting data under the same `QB_Id__c` and will not match existing data.**
+**Please keep in mind that this will overwrite your exsting data under the same `QB_Id__c` and will not match existing data.**
 
 ### Customer -> Account Mapping
 
