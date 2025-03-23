@@ -32,13 +32,21 @@ public class QBCallout {
         );
       }
     }
-
+    String minorVersion = credentials.MinorVersion__c;
+    try {
+      Integer minorVersionInt = Integer.valueOf(minorVersion);
+      if (minorVersionInt < Integer.valueOf(QIMEConstants.MINOR_VERSION)) {
+        minorVersion = QIMEConstants.MINOR_VERSION;
+      }
+    } catch (Exception e) {
+      minorVersion = QIMEConstants.MINOR_VERSION;
+    }
     HttpRequest req = new HttpRequest();
     String url = 'v3/company/' + credentials.Realm_Id__c + '/' + endpoint;
     if (!url.contains('?')) {
-      url += '?minorversion=' + credentials.MinorVersion__c;
+      url += '?minorversion=' + minorVersion;
     } else {
-      url += '&minorversion=' + credentials.MinorVersion__c;
+      url += '&minorversion=' + minorVersion;
     }
     req.setEndpoint('callout:QB_Named_Credential/' + url);
     req.setMethod(method);
@@ -64,7 +72,8 @@ public class QBCallout {
     }
     if (res.getStatusCode() >= 500 || res.getStatusCode() == 401) {
       throw new QBException(
-        'An authorization error ocurred. Please ensure QIME is configured correctly before syncing'
+        'An authorization error ocurred. Please ensure QIME is configured correctly before syncing: ' +
+        res.getBody()
       );
     }
     if (res.getStatusCode() == 301) {
@@ -117,6 +126,17 @@ public class QBCallout {
     } else {
       return new QBCustomerJSON();
     }
+    HttpResponse res = calloutHelper('query', 'POST', query);
+    return QBCustomerJSON.parse(res.getBody());
+  }
+
+  /**
+   * Get customer data from QBO based on QB Id
+   * @param qbId qb id
+   * @return The wrapped json response from the QB callout
+   */
+  public static QBCustomerJSON getCustomer(String qbId) {
+    String query = 'select * from customer where id = \'' + qbId + '\'';
     HttpResponse res = calloutHelper('query', 'POST', query);
     return QBCustomerJSON.parse(res.getBody());
   }

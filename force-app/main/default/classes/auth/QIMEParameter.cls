@@ -27,6 +27,23 @@ public class QIMEParameter {
   }
 
   /**
+   * @description Indicates whether to create a customer if not found in Salesforce.
+   *              Controlled by the custom metadata record `QIME_Parameter.Sales_Receipt_Create_Customer`, or `true` as the default
+   */
+  public static final Boolean SALES_RECEIPT_CREATE_CUSTOMER {
+    get {
+      if (SALES_RECEIPT_CREATE_CUSTOMER == null) {
+        SALES_RECEIPT_CREATE_CUSTOMER = getBoolean(
+          'Sales_Receipt_Create_Customer',
+          true
+        );
+      }
+      return SALES_RECEIPT_CREATE_CUSTOMER;
+    }
+    private set;
+  }
+
+  /**
    * @description Indicates what pricebook sales receipts will be created as.
    *              Controlled by the custom metadata record `QIME_Parameter.Sales_Receipt_Pricebook`, or `null` as the default
    */

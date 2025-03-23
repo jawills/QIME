@@ -35,8 +35,8 @@ The following software editions and permissions are required to configure QIME:
 
 Please use the following links to install the latest version of QIME:
 
-- Prod: https://login.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000Hz5W&isdtp=p1
-- Sandbox https://test.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000Hz5W&isdtp=p1
+- Prod: https://login.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000Hz5v&isdtp=p1
+- Sandbox https://test.salesforce.com/packaging/installPackage.apexp?p0=04tDo000000Hz5v&isdtp=p1
 
 ## QuickBooks Authentication
 
@@ -77,7 +77,7 @@ Go to `Setup` -> `Auth. Providers` and create a new `Auth. Provider` with the fo
 - Token URL: `https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer`
 - Scope: `com.intuit.quickbooks.accounting`
 - Realm Id: The company Id copied previously
-- Minorversion: `65`
+- Minorversion: `75`
 - Execute Registration As: Any Admin User
 
 At the bottom of the page, there are links to initialize and test the Auth. Provider. Take the `Callback URL` in the `Salesforce Configuration` section, and copy it into the `Callback URL` in the `Auth. Provider Detail` section.
@@ -86,6 +86,7 @@ Additionally, in the QuickBooks App, add the `Callback URL` as a redirect URI.
 
 To test that the configuration is setup correctly, in the `Auth. Provider` page, open the `Test-Only Initialization URL` in a new tab, and sign into the desired QuickBooks account. If everything is configured correctly, you should be greeted with a page full of data in an xml format.
 
+**Note: QB only supports minorversion [75 and above](https://blogs.intuit.com/2025/01/21/changes-to-our-accounting-api-that-may-impact-your-application/). We automatically bump minor versions under 75.**
 ### Named Credential
 
 Within the [Winter '23 Salesforce release](https://help.salesforce.com/s/articleView?id=release-notes.rn_security_other_custom_named_credentials.htm&release=240&type=5), named credentials were upgraded with more features. One of these features includes selecting which users can run the named credential. This Salesforce component simplifies the connection between external, third-party services like QuickBooks, and allows the apex code to easily callout and update the necessary authentication details.
