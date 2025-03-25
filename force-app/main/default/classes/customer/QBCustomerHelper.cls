@@ -1,7 +1,12 @@
 public class QBCustomerHelper {
   public static Account createOrUpdateCustomer(Account acc) {
+    qime__QIME_Config__mdt config = qime__QIME_Config__mdt.getInstance(
+      'Default'
+    );
     if (
-      String.isNotBlank(acc.QB_Id__c) || String.isNotBlank(acc.primary_email__c)
+      String.isNotBlank(acc.QB_Id__c) ||
+      String.isNotBlank(acc.primary_email__c) ||
+      config.qime__Link_Customer_By_Name__c
     ) {
       QBCustomerJSON accountData = QBCallout.getCustomer(acc);
 

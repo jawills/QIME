@@ -117,7 +117,7 @@ public class QBCallout {
     if (String.isNotBlank(a.qime__QB_Id__c)) {
       query = 'select * from customer where id = \'' + a.QB_Id__c + '\'';
     } else if (config.qime__Link_Customer_By_Name__c) {
-      query = 'select * from customer where CompanyName = \'' + a.Name + '\'';
+      query = 'select * from customer where DisplayName = \'' + a.Name + '\'';
     } else if (String.isNotBlank(a.primary_email__c)) {
       query =
         'select * from customer where PrimaryEmailAddr = \'' +
